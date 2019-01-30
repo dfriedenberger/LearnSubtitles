@@ -36,8 +36,11 @@ public class DetectorServiceImpl implements DetectorService {
 		String encoding = encodingDetectorService.detect(b);
 		m.setEncoding(encoding);
 		
+		if(encoding == null)
+			encoding = "UTF-8";
+		
 		String language = languageDetectorService.detect(new String(b,encoding));
-		m.setLanguage(encoding);
+		m.setLanguage(language);
 
 		
 		return m;

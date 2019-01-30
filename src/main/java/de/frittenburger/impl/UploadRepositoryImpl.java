@@ -13,8 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.xml.bind.DatatypeConverter;
-
 import de.frittenburger.interfaces.UploadRepository;
 import de.frittenburger.model.UploadBucket;
 import de.frittenburger.model.UploadManifest;
@@ -94,8 +92,13 @@ public class UploadRepositoryImpl implements UploadRepository {
 	}
 
 	@Override
-	public void createFile(UploadBucket bucket, File file) throws GeneralSecurityException, IOException {
-		createFile(bucket,file.getName(),Files.readAllBytes(file.toPath()));
+	public void createManifest(UploadBucket bucket, File file) throws GeneralSecurityException, IOException {
+
+		UploadManifest manifest = bucket.getManifest();
+		String cksum = getCheckSum(file,manifest.getAlgorithm());
+		String line = manifest.add(cksum,file.getName());
+		Files.write( manifest.getPath().toPath() , line.getBytes(), StandardOpenOption.APPEND);
+
 	}
 
 	@Override
@@ -109,16 +112,9 @@ public class UploadRepositoryImpl implements UploadRepository {
 			throw new IllegalArgumentException("filename");
 		
 		File out = new File(bucket.getPayload(),filename);
-		
-		UploadManifest manifest = bucket.getManifest();
-		String cksum = getCheckSum(bytes,manifest.getAlgorithm());
-		
-		String line = manifest.add(cksum,filename);
-		
 		Files.write( out.toPath() , bytes, StandardOpenOption.CREATE_NEW);
-		Files.write( manifest.getPath().toPath() , line.getBytes(), StandardOpenOption.APPEND);
 
-		
+		createManifest(bucket,out);
 		
 	}
 
@@ -128,11 +124,16 @@ public class UploadRepositoryImpl implements UploadRepository {
 	}
 	
 	
-	private String getCheckSum(byte[] bytes,String typ) throws NoSuchAlgorithmException {
-		 MessageDigest md = MessageDigest.getInstance(typ);
+	private String getCheckSum(File file,String typ) throws NoSuchAlgorithmException, IOException {
+		    MessageDigest md = MessageDigest.getInstance(typ);
+		    byte[] bytes = Files.readAllBytes(file.toPath());
 		    md.update(bytes);
 		    byte[] digest = md.digest();
-		    return DatatypeConverter.printHexBinary(digest).toUpperCase();
+		    StringBuilder sb = new StringBuilder();
+		    for (byte b : digest) {
+		        sb.append(String.format("%02X", b));
+		    }
+		    return sb.toString();
 	}
 
 

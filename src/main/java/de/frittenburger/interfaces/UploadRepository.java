@@ -21,9 +21,10 @@ public interface UploadRepository {
 	
 	
 	void createFile(UploadBucket bucket, String filename, byte[] bytes) throws GeneralSecurityException, IOException;
-	void createFile(UploadBucket bucket, File file) throws GeneralSecurityException, IOException;
+	void createManifest(UploadBucket bucket, File file) throws GeneralSecurityException, IOException;
 
 	File[] readFiles(UploadBucket bucket);
+
 
 
 }

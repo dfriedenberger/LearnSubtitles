@@ -4,6 +4,6 @@ import java.io.File;
 
 public interface UnzipService {
 
-	File extract(File file, String string);
+	File extract(File file, File path, String extensionFilter);
 
 }

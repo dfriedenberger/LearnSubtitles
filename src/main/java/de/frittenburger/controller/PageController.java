@@ -1,14 +1,10 @@
 package de.frittenburger.controller;
 
-import io.swagger.annotations.ApiParam;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.UUID;
 
-import javax.servlet.annotation.MultipartConfig;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

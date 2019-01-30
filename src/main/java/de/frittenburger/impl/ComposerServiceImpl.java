@@ -14,6 +14,9 @@ import de.frittenburger.interfaces.UnzipService;
 import de.frittenburger.interfaces.UploadRepository;
 import de.frittenburger.model.DetectMatch;
 import de.frittenburger.model.UploadBucket;
+import de.frittenburger.srt.DefaultFilter;
+import de.frittenburger.srt.SrtMerger;
+import de.frittenburger.srt.SrtReader;
 
 public class ComposerServiceImpl implements ComposerService {
 
@@ -62,21 +65,22 @@ public class ComposerServiceImpl implements ComposerService {
 				throw new IOException("only can process 2 files");
 			}
 			
+			SrtReader[] srtReader = new SrtReader[2];
 			
 			for(int i = 0;i < files.length;i++)
 			{
 				
 				DetectMatch m = detectorService.detect(files[i]);
 								
-				if(m.getExtension().equals(".zip"))
+				if(m.getExtension().equals("zip"))
 				{
-					files[i] = unzipService.extract(files[i],".srt");
-					repository.createFile(bucket, files[i]);
+					files[i] = unzipService.extract(files[i],bucket.getPayload(),".srt");
+					repository.createManifest(bucket, files[i]);
 					m = detectorService.detect(files[i]);
 				}
 				
 				
-				if(!m.getExtension().equals(".srt"))
+				if(!m.getExtension().equals("srt"))
 				{
 					throw new IOException("only can process srt files");
 				}
@@ -88,22 +92,20 @@ public class ComposerServiceImpl implements ComposerService {
 				}
 
 				//str - reader
-				
+				srtReader[i] = new SrtReader();
+				srtReader[i].load(m.getLanguage(),files[i].getPath(),new DefaultFilter(),m.getEncoding());
 				//dump
 			}
 			
 			
 			
-			//Merge
+			//Merge and add to Bucket
+			SrtMerger merger = new SrtMerger();
+			File mergeFile = new File(bucket.getPayload(),"merge_gen.txt");
+			merger.merge(srtReader[0],srtReader[1],mergeFile);
 			
-			
-			//add to Bucket
-			
-			
-			
-			
-			
-			Thread.sleep(10000);
+			repository.createManifest(bucket, mergeFile);
+		
 			state = 99;
 		} catch (Exception e) {
 			logger.error(e);
