@@ -11,6 +11,7 @@
         <link rel="stylesheet" href="/css/dropzone.css">
        
        	<script src="/js/process.js"></script>
+        <link rel="stylesheet" href="/css/create.css">
        
         
     </head>
@@ -18,11 +19,25 @@
     
     <main role="main" class="container">
         
+         <div class="row justify-content-center">
+	    
+	    	<div class="col-8">
+		        <form id="metadata" action="/api/v1/create/start">
+		          <input type="hidden" name="id" th:value="${bucket}">
+				  <div class="form-group">
+				    <input type="email" class="form-control" name="title" placeholder="Enter Title">
+				  </div>
+				  <div class="form-group">
+					 <textarea class="form-control" name="description" rows="3" placeholder="Enter Description"></textarea>
+  				  </div>
+				</form>
+			</div>
+	    </div>
+	  
 	    <div class="row justify-content-center">
-	        <div id="dropzone" class="col-6">
-		    	<form action="/upload" class="dropzone needsclick" id="dropzone">
-		          
-		          <input type="hidden" name="bucket" th:value="${bucket}"/>
+	        <div id="dropzone" class="col-8">
+		    	<form action="/api/v1/create/upload" class="dropzone needsclick" id="dropzone">
+		          <input type="hidden" name="bucketId" th:value="${bucket}"/>
 		          
 				  <div class="dz-message needsclick">
 				    Drop files here or click to upload.
@@ -30,8 +45,10 @@
 				 </form>
 			</div>
 	    </div>
+	   
 	    <div class="row justify-content-center">
-	        <div id="process" class="col-6">
+	    
+	        <div id="process" class="col-8">
 		    	<button class="process btn btn-primary" th:data-bucket="${bucket}">Process</button>
 			</div>
 	    </div>

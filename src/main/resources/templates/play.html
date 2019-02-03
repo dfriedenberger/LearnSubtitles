@@ -1,0 +1,140 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<title>Subtitle</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	 
+	    <div th:replace="fragments/header :: header-js-css-core"/>
+	    
+	    <link rel="stylesheet" href="/css/play.css">
+       
+        
+    </head>
+    <body>
+    
+    
+    
+    <script id="entry-card" type="text/x-handlebars-template">
+  		 <div class="panel">
+			          <div class="front">
+			            <div class="card box1">
+			             <div class="card-body tx-box">
+						  </div>
+			            </div>
+			          </div>
+			          <div class="back">
+			            <div class="card box2">
+			              
+						  <div class="card-body tr-box">
+						  </div>
+						  
+  						  <div>
+								    <button type="button" class="btn btn-lg btn-danger play-command">Not</button>
+								    <button type="button" class="btn btn-lg btn-success play-command play-command-ok">Ok</button>
+			              </div>
+			            
+			            </div>
+			          </div>
+			        </div>
+		</div>
+    </script>
+    
+    
+   
+    <div class="container">
+     
+		<div class="row">
+	        <div class="col-md-4 offset-md-4">
+	        
+				<h2>&Uuml;bersetze</h2>
+			       
+			</div>
+		</div>
+     
+		<div class="row">
+	        <div class="col-md-4 offset-md-4 wrapper">
+			      
+			</div>
+		</div>
+	</div>
+	
+
+	
+    <script>
+    
+		$( document ).ready(function() {
+		    console.log( "ready!" );
+		    
+		  
+		    
+		    var bucketId = '[[${bucketId}]]';
+		    var language = '[[${language}]]';
+		    var clusters = [];
+		    
+		    var source   = document.getElementById("entry-card").innerHTML;
+			var template = Handlebars.compile(source);
+			
+			buildCard = function(ix) {
+		    
+		        var cluster = clusters[ix];
+		    
+		        $(".wrapper").empty();
+		    
+		        var html    = $(template({}));
+		        
+		        
+		        
+		        $(".wrapper").append(html);
+			   
+				   $('.panel').click(function(ev){
+				    ev.preventDefault();
+					$(this).addClass('flip');
+				   });
+			
+			
+			    $('.play-command-ok').click(function(ev){
+				    ev.preventDefault();
+					buildCard(ix+1);
+				 });
+			
+			   $.each( cluster, function( key, value ) {
+			   
+			        if(value.lang == language)
+			        {
+			           container = $('.tr-box');
+			        }
+			        else
+			        {
+			           container = $('.tx-box');
+			        }
+			        
+			        $.each( value.text, function( key, value ) {
+			            console.log(value);
+			        	container.append("<p>"+value+"</p>");
+			        });			   
+			   });
+		    
+		    
+		    }
+		    
+		    
+			$.ajax({
+	           url: "/api/v1/dataset/" + bucketId,
+	           context : this,
+	    	}).then(function(dataset) {
+			      clusters = dataset;
+			      buildCard(0);
+			});
+			
+			
+			
+			   
+			 
+		    
+		    
+		});
+	</script>
+	
+    </body>
+
+</html>

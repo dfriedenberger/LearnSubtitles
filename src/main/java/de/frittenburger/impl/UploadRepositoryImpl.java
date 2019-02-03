@@ -11,26 +11,68 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import de.frittenburger.controller.PageController;
 import de.frittenburger.interfaces.UploadRepository;
+import de.frittenburger.model.UploadBagitInfo;
 import de.frittenburger.model.UploadBucket;
 import de.frittenburger.model.UploadManifest;
 
 public class UploadRepositoryImpl implements UploadRepository {
 
+	private static final Logger logger = LogManager.getLogger(PageController.class);
+
+	private static UploadRepository repository = null;
 	private final File root;
 	private final Map<String,UploadBucket> buckets = new HashMap<String,UploadBucket>();
 
-	public UploadRepositoryImpl(String path) {
+	private UploadRepositoryImpl(String path) throws IOException {
 		
 		this.root = new File(path);
 		if(!this.root.isDirectory())
 			throw new IllegalArgumentException(path + " has to be a directory");
 
 		//read all Buckets
-		
-		
+		for(File dir : this.root.listFiles())
+		{
+			if(!dir.isDirectory()) continue;
+			UploadBucket bucket = new UploadBucket(dir);
+			String bucketId = null;
+			for(String line : Files.readAllLines(bucket.getMetadata().getPath().toPath()))
+			{
+				int i = line.indexOf(":");
+				if(i < 0) continue;
+				String key = line.substring(0, i).trim();
+				String value = line.substring(i + 1).trim();
+				if(key.equals("Id"))
+				{
+					bucketId = value;
+				}
+			}
+			
+			if(bucketId == null)
+				throw new NullPointerException("bucketId");
+			
+			buckets.put(bucketId,new UploadBucket(dir));
+		}
+	}
+	
+	public static synchronized   UploadRepository getInstance() {
+		if(repository == null)
+		{
+			try {
+				repository = new UploadRepositoryImpl("upload");
+			} catch (IOException e) {
+				logger.error(e);
+			}
+			
+		}
+		return repository;
 	}
 
 	@Override
@@ -38,9 +80,13 @@ public class UploadRepositoryImpl implements UploadRepository {
 		return UUID.randomUUID().toString();
 	}
 
-	
 	@Override
-	public UploadBucket getBucket(String bucketId) {
+	public Set<String> readBucketIds() {
+		return buckets.keySet();
+	}
+
+	@Override
+	public UploadBucket readBucket(String bucketId) {
 		
 		if(bucketId == null || bucketId.trim().isEmpty())
 			throw new IllegalArgumentException("bucketid");
@@ -76,13 +122,17 @@ public class UploadRepositoryImpl implements UploadRepository {
 			if(bucketPath.exists()) continue;
 			
 			//create
-			UploadBucket bucket = new UploadBucket(bucketPath,bucketId);
+			UploadBucket bucket = new UploadBucket(bucketPath);
 			bucket.getPath().mkdir();
-			Files.write( bucket.getMetadata().getPath().toPath(), bucket.getMetadata().getData().getBytes(), StandardOpenOption.CREATE_NEW);
+			Files.write( bucket.getMetadata().getPath().toPath(), new byte[0], StandardOpenOption.CREATE_NEW);
 			Files.write( bucket.getManifest().getPath().toPath(), new byte[0], StandardOpenOption.CREATE_NEW);
 
 			bucket.getPayload().mkdir();
 			buckets.put(bucketId,bucket);
+			
+			createMetadata(bucket,new String[]{"Id", "Creation-Date"},
+					new String[]{ bucketId ,new SimpleDateFormat("yyyy-MM-dd").format(new Date())});
+
 			return bucket;
 		}
 		
@@ -100,7 +150,24 @@ public class UploadRepositoryImpl implements UploadRepository {
 		Files.write( manifest.getPath().toPath() , line.getBytes(), StandardOpenOption.APPEND);
 
 	}
+	
+	@Override
+	public void createMetadata(UploadBucket bucket, String key[], String value[]) throws IOException {
 
+		UploadBagitInfo metadata = bucket.getMetadata();
+		String lines = metadata.add(key,value);
+		Files.write( metadata.getPath().toPath() , lines.getBytes(), StandardOpenOption.APPEND);
+
+	}
+	
+	
+	
+	@Override
+	public byte[] readFile(UploadBucket bucket, String filename) throws IOException {
+		File in = new File(bucket.getPayload(),filename);	
+		return Files.readAllBytes(in.toPath());
+	}
+	
 	@Override
 	public void createFile(UploadBucket bucket, String filename, byte[] bytes) throws GeneralSecurityException, IOException {
 
@@ -153,6 +220,10 @@ public class UploadRepositoryImpl implements UploadRepository {
 	      return false;
 	  }
 
+	
+
+
+	
 	
 	
 

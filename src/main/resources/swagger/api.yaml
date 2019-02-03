@@ -1,0 +1,207 @@
+swagger: "2.0"
+info:
+  description: "Learning Plattfom with movie subtitles"
+  version: "1.0.0"
+  title: "Learning Subtitles"
+  termsOfService: "http://swagger.io/terms/"
+  contact:
+    email: "projekte@frittenburger.de"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "learn.frittenburger.de"
+basePath: "/v1"
+tags:
+- name: "dataset"
+  description: "datasets for learning language"
+- name: "create"
+  description: "create datasets"
+  
+schemes:
+- "https"
+- "http"
+
+paths:
+  /datasets:
+    get:
+      tags:
+      - "dataset"
+      summary: "get list of dataset metadata"
+      description: ""
+      operationId: "getDatasets"
+      produces:
+      - "application/json"
+      responses:
+        201:
+          description: "list of available datasets"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/BucketMetadata"
+        400:
+          description: "Invalid status value"
+
+  /dataset/{bucketId}:
+    get:
+      tags:
+      - "dataset"
+      summary: "get dataset"
+      description: ""
+      operationId: "getDataset"
+      parameters:
+      - name: "bucketId"
+        in: "path"
+        description: "ID of bucket"
+        required: true
+        type: "string"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: Ok
+          schema:
+            type: file
+        405:
+          description: Invalid input    
+          
+  /dataset/{bucketId}/{filename}:
+    get:
+      tags:
+      - "dataset"
+      summary: "get list of dataset metadata"
+      description: ""
+      operationId: "getFile"
+      parameters:
+      - name: "bucketId"
+        in: "path"
+        description: "ID of bucket"
+        required: true
+        type: "string"
+      - name: "filename"
+        in: "path"
+        description: "filename"
+        required: true
+        type: "string"        
+      responses:
+        200:
+          description: Ok
+          schema:
+            type: file
+        405:
+          description: Invalid input              
+        
+  /create/upload:
+    post:
+      tags:
+      - "create"
+      summary: "uploads an file"
+      description: ""
+      operationId: "uploadFile"
+      consumes:
+      - "multipart/form-data"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "bucketId"
+        in: "formData"
+        description: "ID of bucket"
+        required: true
+        type: "string"
+      - name: "file"
+        in: "formData"
+        description: "file to upload"
+        required: true
+        type: "file"
+      responses:
+        200:
+          description: "successful operation"
+    
+  /create/start:
+    put:
+      tags:
+      - "create"
+      summary: "Start Processing Bucket"
+      description: ""
+      operationId: "startProcessing"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "bucket"
+        description: "Bucket"
+        required: true
+        schema:
+          $ref: "#/definitions/BucketCommand"
+      responses:
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Bucket not found"
+        405:
+          description: "Validation exception"
+          
+  /create/{bucketId}:
+    get:
+      tags:
+      - "create"
+      summary: "get current state of bucket"
+      description: ""
+      operationId: "getState"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "bucketId"
+        in: "path"
+        description: "ID of bucket"
+        required: true
+        type: "string"
+      responses:
+        201:
+          description: "list of available datasets"
+          schema:
+              $ref: "#/definitions/BucketState"
+        400:
+          description: "Invalid status value"
+    
+
+  
+
+definitions:
+  BucketMetadata:
+    type: "object"
+    properties:
+      id:
+        type: string
+      title:
+        type: string
+      description:
+        type: string   
+      image:
+        type: string 
+      count:
+        type: integer
+        format: int32
+      languages:
+        type: array
+        items:
+          type: string
+        
+  BucketCommand:
+    type: object
+    properties:
+      id:
+        type: string
+      title:
+        type: string
+      description:
+        type: string
+        
+  BucketState:
+    type: object
+    properties:
+      id:
+        type: string
+      state:
+        type: string

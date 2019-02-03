@@ -10,12 +10,9 @@ public class UploadBucket {
 	private final UploadBagitInfo metadata;
 	private final UploadManifest manifest;
 
-	public UploadBucket(File path, String id) {
+	public UploadBucket(File path) {
 		this.path = path;
 		this.metadata = new UploadBagitInfo(new File(path,"bag-info.txt")); 
-		this.metadata.add("Id",id);
-		this.metadata.add("Creation-Date",new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
-		
 		this.manifest = new UploadManifest(new File(path,"manifest-md5.txt"),"data/","MD5");
 	}
 

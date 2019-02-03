@@ -6,12 +6,101 @@
 	 
 	    <div th:replace="fragments/header :: header-js-css-core"/>
 	    
-	 
+	    <link rel="stylesheet" href="/css/searchbar.css">
+	    <link rel="stylesheet" href="/css/eventlist.css">
+	    <link href="/css/flags.css" rel="stylesheet" type="text/css">
        
         
     </head>
     <body>
-        <h1>Hello</h1> 
+    
+    
+    
+    <script id="entry-template" type="text/x-handlebars-template">
+  		<li>
+				<img alt="Independence Day" src="{{image}}" />
+				<div class="info">
+					<h2 class="title">{{title}}</h2>
+					<p class="desc">{{description}}</p>
+					<ul>
+							<li style="width:25%;">{{count}}&nbsp;<i class="fa fa-question" aria-hidden="true"></i></li>
+							<li style="width:50%;">
+								<img src="/css/blank.gif" class="flag flag-{{lang0}}">
+								&nbsp;
+							    <img src="/css/blank.gif" class="flag flag-{{lang1}}">
+							</li>
+							<li class="play" style="width:25%;"><a href="{{link}}"><span class="fa fa-play"></span></a></li>
+					</ul>
+				</div>
+				<!--
+				<div class="social">
+					<ul>
+						<li class="facebook" style="width:33%;"><a href="#facebook"><span class="fa fa-facebook"></span></a></li>
+						<li class="twitter" style="width:34%;"><a href="#twitter"><span class="fa fa-twitter"></span></a></li>
+						<li class="google-plus" style="width:33%;"><a href="#google-plus"><span class="fa fa-google-plus"></span></a></li>
+					</ul>
+				</div>
+				-->
+		</li>
+    </script>
+    
+    
+   
+    <div class="container">
+     
+      	<div class="row justify-content-md-center searchbar">
+	        <div class="col col-lg-8">
+		        <div class="input-group">
+	                <input class="form-control border-secondary py-2" type="search" value="search">
+	                <div class="input-group-append">
+	                    <button class="btn btn-outline-secondary" type="button">
+	                        <i class="fa fa-search"></i>
+	                    </button>
+	                </div>
+	            </div>
+	        </div>
+        </div>
+     
+		<div class="row justify-content-md-center">
+	        <div class="col col-lg-8">
+				<ul class="event-list">
+					
+				</ul>
+			</div>
+		</div>
+	</div>
+	
+    <script>
+    
+		$( document ).ready(function() {
+		    console.log( "ready!" );
+		    
+		    var source   = document.getElementById("entry-template").innerHTML;
+			var template = Handlebars.compile(source);
+			
+			$.ajax({
+	           url: "/api/v1/datasets",
+	           context : this,
+	    	}).then(function(dataset) {
+			   console.log(dataset);
+			   $.each( dataset, function( key, value ) {
+			   
+			      var context = { 
+			      			title: value.title, 
+			      		    description: value.description, 
+			      			image: value.image,
+			      			lang0 : value.languages[0],
+			      			lang1 : value.languages[1],
+			      			count: value.count,
+			      			link: '/play/de/'+value.id
+			      };
+			      var html    = template(context);
+		          $(".event-list").append(html);
+			   });
+			});
+		    
+		});
+	</script>
 	
     </body>
 
