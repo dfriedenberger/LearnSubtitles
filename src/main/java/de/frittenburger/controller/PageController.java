@@ -37,27 +37,14 @@ public class PageController {
 	@RequestMapping("/")
 	public String welcome(Map<String, Object> model) {
 
-		model.put("test", "xxx");
-
 		if (logger.isInfoEnabled()) {
 			logger.info("call Welcome");
 		}
 
-		return "welcome";
+	    return "welcome";
 	}
 
-	@RequestMapping(value = "/{language}/",
-	        method = RequestMethod.GET)
-	public String index(Map<String, Object> model, @PathVariable("language") String language) {
 
-		model.put("language", language);
-
-		if (logger.isInfoEnabled()) {
-			logger.info("call Welcome {}", language);
-		}
-
-		return "welcome";
-	}
 	
 	@RequestMapping("/create")
 	public String create(Map<String, Object> model) {
@@ -71,15 +58,14 @@ public class PageController {
 		return "create";
 	}
 
-	 @RequestMapping(value = "/play/{language}/{bucketId}",
+	 @RequestMapping(value = "/play/{bucketId}",
 		        method = RequestMethod.GET)
-	 public String play(Map<String, Object> model, @PathVariable("language") String language, @PathVariable("bucketId") String bucketId) {
+	 public String play(Map<String, Object> model, @PathVariable("bucketId") String bucketId) {
 
 		model.put("bucketId", bucketId);
-		model.put("language", language);
 
 		if (logger.isInfoEnabled()) {
-			logger.info("call Create {} {}" ,language, bucketId);
+			logger.info("call Create {} {}" , bucketId);
 		}
 
 		return "play";

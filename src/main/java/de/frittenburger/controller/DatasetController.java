@@ -46,64 +46,66 @@ public class DatasetController implements DatasetApi {
 	public ResponseEntity<List<BucketMetadata>> getDatasets()  {
 
 		
-		try
-		{
+		
 			List<BucketMetadata> list = new ArrayList<BucketMetadata>();
 			
 			
 			for(String bucketId : repository.readBucketIds())
 			{
-				UploadBucket bucket = repository.readBucket(bucketId);
-
-				byte src[] = repository.readFile(bucket, "info.json");
-				
-				Map<String,String> map = new ObjectMapper().readValue(src, new TypeReference<HashMap<String,String>>() {});
-				
-				BucketMetadata md = new BucketMetadata();
-				md.setId(bucketId);
-				md.setTitle(map.get("title"));
-				
-				String desc = map.get("description");
-				if(desc.length() > 140) 
+				try
 				{
-					int i = desc.lastIndexOf(" ", 140);
-					desc = desc.substring(0, i + 1)+"...";
-				}
-				
-				md.setDescription(desc);
-				
-				for(File file : repository.readFiles(bucket))
-				{
-					String name = file.getName();
+					UploadBucket bucket = repository.readBucket(bucketId);
+	
+					byte src[] = repository.readFile(bucket, "info.json");
 					
-					if(name.toLowerCase().endsWith(".jpg"))
-						md.setImage("/api/v1/dataset/"+bucketId+"/"+name);
-				}
-				
-				byte data[] = repository.readFile(bucket, "merge_gen.txt");
+					Map<String,String> map = new ObjectMapper().readValue(src, new TypeReference<HashMap<String,String>>() {});
+					
+					BucketMetadata md = new BucketMetadata();
+					md.setId(bucketId);
+					md.setTitle(map.get("title"));
+					
+					String desc = map.get("description");
+					if(desc.length() > 140) 
+					{
+						int i = desc.lastIndexOf(" ", 140);
+						desc = desc.substring(0, i + 1)+"...";
+					}
+					
+					md.setDescription(desc);
+					
+					for(File file : repository.readFiles(bucket))
+					{
+						String name = file.getName();
+						
+						if(name.toLowerCase().endsWith(".jpg"))
+							md.setImage("/api/v1/dataset/"+bucketId+"/"+name);
+					}
+					
+					byte data[] = repository.readFile(bucket, "merge_gen.txt");
+	
+					SrtMergeReader reader = new SrtMergeReader(data);
+					
+					Set<String> languages = new HashSet<String>();
+					List<SrtCluster> clusters = reader.read();
+					
+					for(int i = 0;i < clusters.size() && languages.size() < 2;i++)
+					{
+						languages.addAll(clusters.get(i).getCounter().keySet());
+					}
+					md.setCount(clusters.size());
+					md.setLanguages(languages.stream().sorted().collect(Collectors.toList()));
+					list.add(md);
 
-				SrtMergeReader reader = new SrtMergeReader(data);
-				
-				Set<String> languages = new HashSet<String>();
-				List<SrtCluster> clusters = reader.read();
-				
-				for(int i = 0;i < clusters.size() && languages.size() < 2;i++)
-				{
-					languages.addAll(clusters.get(i).getCounter().keySet());
 				}
-				md.setCount(clusters.size());
-				md.setLanguages(languages.stream().sorted().collect(Collectors.toList()));
-				
-				list.add(md);
+				catch(Exception e)
+				{
+					logger.error(e);
+				}
 				
 			}
 			return ok(list);
-		}
-		catch(Exception e)
-		{
-			logger.error(e);
-		}
-		return new ResponseEntity<List<BucketMetadata>>(HttpStatus.INTERNAL_SERVER_ERROR);
+	
+		//return new ResponseEntity<List<BucketMetadata>>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
 	

@@ -37,6 +37,7 @@ public class SrtMerger {
 		    {
 		    	cluster.add(rec1);
 				i1++;
+				continue;
 		    }
 
 			if(rec1 == null)

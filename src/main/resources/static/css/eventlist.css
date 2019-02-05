@@ -1,9 +1,6 @@
     @import url("http://fonts.googleapis.com/css?family=Lato:100,300,400,700,900,400italic");
     @import url("//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.css");
-    body {
-		padding: 60px 0px;
-		background-color: rgb(220, 220, 220);
-	}
+   
     
     .event-list {
 		list-style: none;
@@ -201,4 +198,5 @@
         color: rgb(30, 30, 30);
 		background-color: rgb(200, 200, 200);	
 	}
+	
 	
