@@ -1,7 +1,6 @@
 package de.frittenburger.controller;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,7 +25,6 @@ import de.frittenburger.api.DatasetApi;
 import de.frittenburger.impl.UploadRepositoryImpl;
 import de.frittenburger.interfaces.UploadRepository;
 import de.frittenburger.model.BucketMetadata;
-import de.frittenburger.model.Metadata;
 import de.frittenburger.model.UploadBucket;
 import de.frittenburger.srt.SrtCluster;
 import de.frittenburger.srt.SrtMergeReader;
@@ -119,7 +117,6 @@ public class DatasetController implements DatasetApi {
 
 			SrtMergeReader reader = new SrtMergeReader(text);
 			
-			Set<String> languages = new HashSet<String>();
 			List<SrtCluster> clusters = reader.read();
 	
 			byte[] data = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsBytes(clusters);

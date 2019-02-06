@@ -2,7 +2,6 @@ package de.frittenburger.impl;
 
 import io.micrometer.core.instrument.util.IOUtils;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.JarURLConnection;
 import java.net.URL;

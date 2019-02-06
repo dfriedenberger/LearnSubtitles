@@ -1,9 +1,6 @@
 package de.frittenburger.controller;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -20,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.frittenburger.api.CreateApi;
-import de.frittenburger.api.DatasetApi;
 import de.frittenburger.impl.ComposerEngine;
 import de.frittenburger.impl.ComposerServiceImpl;
 import de.frittenburger.impl.SrtMergerServiceImpl;
@@ -29,9 +25,7 @@ import de.frittenburger.impl.UploadRepositoryImpl;
 import de.frittenburger.interfaces.UploadRepository;
 import de.frittenburger.model.BucketCommand;
 import de.frittenburger.model.BucketState;
-import de.frittenburger.model.Metadata;
 import de.frittenburger.model.UploadBucket;
-import static org.springframework.http.ResponseEntity.ok;
 
 
 

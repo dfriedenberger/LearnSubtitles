@@ -1,31 +1,17 @@
 package de.frittenburger.controller;
 
 
-import java.util.Iterator;
 import java.util.Map;
-import java.util.TreeMap;
-
-
-
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import de.frittenburger.impl.ComposerEngine;
-import de.frittenburger.impl.ComposerServiceImpl;
-import de.frittenburger.impl.SrtMergerServiceImpl;
-import de.frittenburger.impl.UnzipServiceImpl;
 import de.frittenburger.impl.UploadRepositoryImpl;
 import de.frittenburger.interfaces.UploadRepository;
-import de.frittenburger.model.UploadBucket;
 
 @Controller
 public class PageController {
