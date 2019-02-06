@@ -17,7 +17,7 @@
 	border-bottom: 1px solid #666;
 }
 
-.play-command {
+.play-commandxxx {
 	width: 40%;
 	margin: 10px;
 }
@@ -29,7 +29,7 @@
 @media (max-width: 768px) {
 	
 	.tx-box , .tr-box {
-		height: 230px;
+		height: 190px;
 	}
 }
 

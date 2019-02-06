@@ -1,22 +1,29 @@
 
 
-CardManager = function(language,bucketId)
+CardManager = function(language0,language1,bucketId)
 {
     this.dataset = [];
     this.ix = 0;
-    this.language = language;
+    this.language0 = language0;
+    this.language1 = language1;
     this.bucketId = bucketId;
+    this.database = new Database();
 
     $('.play-command-next').hide(0);
 
     //init
-    var dataStr = localStorage.getItem(this.bucketId);
-    if(dataStr)
+    var data = this.database.read(this.bucketId);
+    if(data)
     {
-        var data = JSON.parse(dataStr);
-        this.ix = data.ix;
-    }
 
+        this.ix = data.ix;
+        this.language0 = data.language0;
+        this.language1 = data.language1;
+
+    }
+   
+  
+ 
 
     this.setDataset = function(dataset)
     {
@@ -57,7 +64,7 @@ CardManager = function(language,bucketId)
         $('.time').text(this._timestr(list[0].from));
         $.each( list , function( key, value ) {
         
-            if(value.lang == manager.language)
+            if(value.lang == manager.language1)
             {
                 container = $('.tr-box');
             }
@@ -80,9 +87,12 @@ CardManager = function(language,bucketId)
     this._nextCard = function()
     {
         this.ix++;
-
-        var data = { ix : this.ix };
-        localStorage.setItem(this.bucketId, JSON.stringify(data));	
+        var data = { 
+            ix : this.ix,
+            language0 : this.language0,
+            language1 : this.language1
+        };
+        this.database.write(this.bucketId,data);
 
         this._showCard();
     }

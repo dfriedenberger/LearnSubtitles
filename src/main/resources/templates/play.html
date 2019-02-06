@@ -6,6 +6,7 @@
 	 
 	    <div th:replace="fragments/header :: header-js-css-core"/>
 	   
+	   	<script src="/js/database.class.js"></script>
 	    <script src="/js/card.class.js"></script>
 	    <link rel="stylesheet" href="/css/play.css">
        
@@ -56,10 +57,22 @@
 		    console.log( "ready!" );
 		
 		    var bucketId = '[[${bucketId}]]';
-		    var language = '[[${#locale}]]';
+		    var nativeLanguage = '[[${#locale}]]';
 		    
-		    console.log("language="+language);
-		    var cardManager = new CardManager(language,bucketId);
+		    var language0 = '[[${language0}]]';
+		    var language1 = '[[${language1}]]';
+		
+			if(language0 == nativeLanguage)
+		    {
+		        language0 = language1;
+		        language1 = nativeLanguage;
+		    }
+		    
+		    var cardManager = new CardManager(language0,language1,bucketId);
+		    
+		    
+		    
+		    
 		    
 			$.ajax({
 	           url: "/api/v1/dataset/" + bucketId,

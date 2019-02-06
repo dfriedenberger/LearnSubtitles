@@ -1,13 +1,7 @@
 package de.frittenburger.controller;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,11 +12,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.frittenburger.api.DatasetApi;
+import de.frittenburger.impl.RepositoryServiceImpl;
 import de.frittenburger.impl.UploadRepositoryImpl;
+import de.frittenburger.interfaces.RepositoryService;
 import de.frittenburger.interfaces.UploadRepository;
 import de.frittenburger.model.BucketMetadata;
 import de.frittenburger.model.UploadBucket;
@@ -39,6 +34,7 @@ public class DatasetController implements DatasetApi {
 	private static final Logger logger = LogManager.getLogger(PageController.class);
 
 	private static final UploadRepository repository = UploadRepositoryImpl.getInstance();
+	private static final RepositoryService repositoryService = new RepositoryServiceImpl(repository);
 
 	@Override
 	public ResponseEntity<List<BucketMetadata>> getDatasets()  {
@@ -52,46 +48,8 @@ public class DatasetController implements DatasetApi {
 			{
 				try
 				{
-					UploadBucket bucket = repository.readBucket(bucketId);
 	
-					byte src[] = repository.readFile(bucket, "info.json");
-					
-					Map<String,String> map = new ObjectMapper().readValue(src, new TypeReference<HashMap<String,String>>() {});
-					
-					BucketMetadata md = new BucketMetadata();
-					md.setId(bucketId);
-					md.setTitle(map.get("title"));
-					
-					String desc = map.get("description");
-					if(desc.length() > 140) 
-					{
-						int i = desc.lastIndexOf(" ", 140);
-						desc = desc.substring(0, i + 1)+"...";
-					}
-					
-					md.setDescription(desc);
-					
-					for(File file : repository.readFiles(bucket))
-					{
-						String name = file.getName();
-						
-						if(name.toLowerCase().endsWith(".jpg"))
-							md.setImage("/api/v1/dataset/"+bucketId+"/"+name);
-					}
-					
-					byte data[] = repository.readFile(bucket, "merge_gen.txt");
-	
-					SrtMergeReader reader = new SrtMergeReader(data);
-					
-					Set<String> languages = new HashSet<String>();
-					List<SrtCluster> clusters = reader.read();
-					
-					for(int i = 0;i < clusters.size() && languages.size() < 2;i++)
-					{
-						languages.addAll(clusters.get(i).getCounter().keySet());
-					}
-					md.setCount(clusters.size());
-					md.setLanguages(languages.stream().sorted().collect(Collectors.toList()));
+					BucketMetadata md = repositoryService.getBucketMetadata(bucketId);
 					list.add(md);
 
 				}

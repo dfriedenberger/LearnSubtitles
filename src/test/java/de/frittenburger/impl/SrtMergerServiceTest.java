@@ -14,18 +14,15 @@ import de.frittenburger.interfaces.SrtMergerService;
 
 public class SrtMergerServiceTest {
 
-	@Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
+	private void integrationTest(String movie) throws IOException {
+
+		if(!new File("tmp").exists()) return;
 	
-	@Test
-	public void test1() throws IOException {
-		
-		
 		SrtMergerService service = new SrtMergerServiceImpl();
 		
-		File mergeFile = new File("tmp/grantorino/merge.txt"); //tempFolder.newFile("merge.txt");
+		File mergeFile = new File("tmp/"+movie+"/merge.txt"); 
 		
-		File[] srtFiles = new File("tmp/grantorino").listFiles(new FilenameFilter(){
+		File[] srtFiles = new File("tmp/"+movie).listFiles(new FilenameFilter(){
 
 			@Override
 			public boolean accept(File dir, String name) {
@@ -34,63 +31,29 @@ public class SrtMergerServiceTest {
 		service.merge(srtFiles, mergeFile);
 		
 		assertTrue(mergeFile.length() > 10);
+		
 	}
 	
 	@Test
-	public void test2() throws IOException {
-		
-		
-		SrtMergerService service = new SrtMergerServiceImpl();
-		
-		File mergeFile = new File("tmp/elbar/merge.txt"); //tempFolder.newFile("merge.txt");
-		
-		File[] srtFiles = new File("tmp/elbar").listFiles(new FilenameFilter(){
+	public void test1() throws IOException {
+		integrationTest("grantorino");
+	}
+	
+	
 
-			@Override
-			public boolean accept(File dir, String name) {
-				return name.toLowerCase().endsWith(".srt");
-			}});
-		service.merge(srtFiles, mergeFile);
-		
-		assertTrue(mergeFile.length() > 10);
+	@Test
+	public void test2() throws IOException {
+		integrationTest("elbar");
 	}
 
 	@Test
 	public void test3() throws IOException {
-		
-		
-		SrtMergerService service = new SrtMergerServiceImpl();
-		
-		File mergeFile = new File("tmp/spiderman/merge.txt"); //tempFolder.newFile("merge.txt");
-		
-		File[] srtFiles = new File("tmp/spiderman").listFiles(new FilenameFilter(){
-
-			@Override
-			public boolean accept(File dir, String name) {
-				return name.toLowerCase().endsWith(".srt");
-			}});
-		service.merge(srtFiles, mergeFile);
-		
-		assertTrue(mergeFile.length() > 10);
+		integrationTest("spiderman");
 	}
 	
 	@Test
 	public void test4() throws IOException {
-		
-		
-		SrtMergerService service = new SrtMergerServiceImpl();
-		
-		File mergeFile = new File("tmp/kammerflimmern/merge.txt"); //tempFolder.newFile("merge.txt");
-		
-		File[] srtFiles = new File("tmp/kammerflimmern").listFiles(new FilenameFilter(){
-
-			@Override
-			public boolean accept(File dir, String name) {
-				return name.toLowerCase().endsWith(".srt");
-			}});
-		service.merge(srtFiles, mergeFile);
-		
-		assertTrue(mergeFile.length() > 10);
+		integrationTest("kammerflimmern");
 	}
 	
 	

@@ -6,8 +6,11 @@
 	 
 	    <div th:replace="fragments/header :: header-js-css-core"/>
 	    
+	    <script src="/js/database.class.js"></script>
+	    
 	    <link rel="stylesheet" href="/css/searchbar.css">
 	    <link rel="stylesheet" href="/css/eventlist.css">
+	    
        <style>
        .jumbotron{
              color: #fff;
@@ -35,10 +38,9 @@
 					<h2 class="title">{{title}}</h2>
 					<p class="desc">{{description}}</p>
 					<ul>
-							<li style="width:70%;">{{ix}}/{{count}}&nbsp;({{percent}}%)</i></li>
-							<li style="width:15%;">
+							<li style="width:60%;">{{ix}}/{{count}}&nbsp;({{percent}}%)</i></li>
+							<li style="width:25%;">
 								<img src="/css/blank.gif" class="flag flag-{{lang0}}">
-								&nbsp;
 							    <img src="/css/blank.gif" class="flag flag-{{lang1}}">
 							</li>
 							<li class="play" style="width:15%;"><a href="{{link}}"><span class="fa fa-play"></span></a></li>
@@ -104,6 +106,8 @@
     
 		$( document ).ready(function() {
 		
+		    var database = new Database();
+		     
 		     
 		    console.log( "ready!" );
 		    
@@ -127,18 +131,19 @@
 			   console.log(dataset);
 			   $.each( dataset, function( key, value ) {
 			   
+			       var data = database.read(value.id);
 			       var dataStr = localStorage.getItem(value.id);
 			       var percent = 0;
 			       var ix = 0;
-				   if(dataStr)
+			       
+				   if(data)
 				   {
-				        var data = JSON.parse(dataStr);
-				        ix = data.ix;
-				        percent = parseInt(100 * data.ix / value.count);
+				        ix = data.ix + 1;
 				   }
 			   
+			   	   percent = parseInt(100 * ix / value.count);
 			   
-			      var context = { 
+			       var context = { 
 			      			title: value.title, 
 			      		    description: value.description, 
 			      			image: value.image,
