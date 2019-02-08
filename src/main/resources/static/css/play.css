@@ -17,20 +17,53 @@
 	border-bottom: 1px solid #666;
 }
 
-.play-commandxxx {
-	width: 40%;
-	margin: 10px;
-}
 
 .card {
 		padding: 20px;
 	}	
+
+
+
+
 	
+@-webkit-keyframes blink {
+   from { color: green; }
+   to { color: white; }
+  }
+ @-moz-keyframes blink {
+   from { color: green; }
+   to { color: white; }
+ }
+ @-ms-keyframes blink {
+   from { color: green; }
+   to { color: white; }
+ }
+ @-o-keyframes blink {
+   from { color: green; }
+   to { color: white; }
+ }
+ @keyframes blink {
+   from { color: green; }
+   to { color: white; }
+ }
+
+.invisible { display: none; } 
+.blink {
+    color: green;
+    -webkit-animation: blink 1s infinite alternate;
+    -moz-animation: blink 1s infinite alternate;  
+    -ms-animation: blink 1s infinite alternate;  
+    -o-animation: blink 1s infinite alternate;  
+    animation: blink 1s infinite alternate;   
+ }
+
 @media (max-width: 768px) {
 	
 	.tx-box , .tr-box {
 		height: 190px;
 	}
+	
+
 }
 
 @media (min-width: 768px) {
@@ -38,4 +71,15 @@
 	.tx-box , .tr-box {
 		height: 130px;
 	}
+	
+}
+
+.my-card-footer {
+    padding: .75rem 1.25rem;
+}
+.statistic {
+	padding-right: 5px;
+}
+.change-language {
+	display:inline;
 }

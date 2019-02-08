@@ -99,6 +99,35 @@
 		</div>
 	</main>
 	
+
+	
+	<!-- Modal -->
+    <div class="modal fade" id="nativelanguage" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	  <div class="modal-dialog modal-dialog-centered" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <h5 class="modal-title" th:text="#{nativelanguage}"></h5>
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	          <span aria-hidden="true">&times;</span>
+	        </button>
+	      </div>
+	      <div class="modal-body">
+	          <div>
+				<a class="select-nativelanguage" th:href="@{''(lang=de)}"><img src="/css/blank.gif" class="flag flag-de"> Meine Muttersprache ist Deutsch</a>
+			  </div>
+	          <div>			  
+		        <a class="select-nativelanguage" th:href="@{''(lang=en)}"><img src="/css/blank.gif" class="flag flag-us"> My native language is English.</a>
+			  </div>
+	          <div>			  
+		        <a class="select-nativelanguage" th:href="@{''(lang=es)}"><img src="/css/blank.gif" class="flag flag-es"> Mi idioma nativo es el espa&ntilde;ol.</a>
+			  </div>
+	      </div>
+	     
+	    </div>
+	  </div>
+	</div>
+	
+	
 	
 	<footer th:replace="fragments/header :: header-fixed-footer"/>
 	
@@ -109,7 +138,25 @@
 		    var database = new Database();
 		     
 		     
-		    console.log( "ready!" );
+		     
+		    urlParam = function(url,name) {
+			    var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(url);
+			    if (results==null) {
+			       return null;
+			    }
+			    return decodeURI(results[1]) || 0;
+			}
+		     
+		     
+		    var language = urlParam(window.location.href,"lang");
+		    if(language)
+		    {
+		      var config = {
+	             language : language
+              };
+   			  database.write("configuration",config);
+		    }
+	 
 		    
 		    toFlag = function(lang) {
 		    	switch(lang)
@@ -158,6 +205,12 @@
 		          $(".event-list").append(html);
 			   });
 			});
+		    
+		    var config = database.read("configuration");
+		    if(config == undefined)
+		    {
+		    	$('#nativelanguage').modal('show');
+		    }
 		    
 		});
 	</script>

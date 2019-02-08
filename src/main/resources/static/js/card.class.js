@@ -1,5 +1,5 @@
 
-
+   
 CardManager = function(language0,language1,bucketId)
 {
     this.dataset = [];
@@ -36,16 +36,7 @@ CardManager = function(language0,language1,bucketId)
         console.log(pos+' '+nivel);
     }
 
-    this._timestr = function(millis)
-    {
-        var ss = parseInt(millis / 1000);
-        var hh =  parseInt(ss / 3600);
-        ss -= hh * 3600;
-        var mm =   parseInt(ss / 60);
-        ss -= mm * 60;
-
-       return (hh > 9?hh:"0"+hh) + ":" + (mm > 9?mm:"0"+mm) + ":" + (ss > 9?ss:"0"+ss);
-    }
+  
 
     this._showCard = function()
     {
@@ -59,9 +50,9 @@ CardManager = function(language0,language1,bucketId)
         $('.play-command-next').hide(0);
         $('.play-command-show').show(0);
 
+        var percent = parseInt(100 * this.ix  / this.dataset.length);
 
-        $('.statistic').text( (this.ix +1) +"/"+this.dataset.length);
-        $('.time').text(this._timestr(list[0].from));
+        $('.statistic').text( (this.ix +1) +"/"+this.dataset.length+" ("+percent+"%)");
         $.each( list , function( key, value ) {
         
             if(value.lang == manager.language1)
@@ -82,11 +73,26 @@ CardManager = function(language0,language1,bucketId)
         $('.tr-box').find("span").hide(0);
 
     }
-
-    
-    this._nextCard = function()
+    this._toFlag = function(lang) {
+        switch(lang)
+        {
+        case 'en':
+            return 'us';
+        default:
+            return lang;
+        }
+    }
+    this._showFlags = function()
     {
-        this.ix++;
+        var flags = $('.change-language').find("img").toArray();
+        console.log(flags);
+        $(flags[0]).removeClass("flag-"+this._toFlag(this.language1));
+        $(flags[0]).addClass("flag-"+this._toFlag(this.language0));
+        $(flags[1]).removeClass("flag-"+this._toFlag(this.language0));
+        $(flags[1]).addClass("flag-"+this._toFlag(this.language1));
+    }
+    this._saveState = function()
+    {
         var data = { 
             ix : this.ix,
             language0 : this.language0,
@@ -94,7 +100,6 @@ CardManager = function(language0,language1,bucketId)
         };
         this.database.write(this.bucketId,data);
 
-        this._showCard();
     }
 
     this.build = function()
@@ -111,11 +116,27 @@ CardManager = function(language0,language1,bucketId)
         });
         
         $('.play-command-next').click(function(ev){
+            this.ix++;
+
             ev.preventDefault();
-            manager._nextCard();
+            manager._saveState();
+            manager._showCard();
+
+        });
+        $('.change-language').click(function(ev){
+            ev.preventDefault();
+
+            //change langauges
+            var tmp = manager.language0;
+            manager.language0 = manager.language1;
+            manager.language1 = tmp;
+
+            manager._saveState();
+            manager._showFlags();
+            manager._showCard();
         });
 
-
+        manager._showFlags();
         manager._showCard();
 
 			

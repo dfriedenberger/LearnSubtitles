@@ -6,8 +6,13 @@
 	 
 	    <div th:replace="fragments/header :: header-js-css-core"/>
 	   
+	   	<script src="/js/NoSleep.min.js"></script>
+	   
 	   	<script src="/js/database.class.js"></script>
 	    <script src="/js/card.class.js"></script>
+	    <script src="/js/modul-play.js"></script>
+	           
+	    
 	    <link rel="stylesheet" href="/css/play.css">
        
         
@@ -16,7 +21,7 @@
     
     
     
-    <header th:replace="fragments/header :: header-fixed-header"/>
+    <header th:replace="fragments/header :: header-fixed-play-header"/>
     
    
    <main role="main">
@@ -24,22 +29,25 @@
           
 			<div class="row">
 		        <div class="col-md-8 offset-md-2 wrapper">
-				      
+				       
 				       <div class="card">
+				       
 							  <div class="card-body">
 								  <div class="tx-box"></div>
 								  <div class="tr-box"></div>
-							  </div>
-							  
-							  <div>
-							  	<span class="statistic"></span>
-							  	<span class="time"></span>
 							  </div>
 	  						  <div>
 									<button type="button" class="btn btn-lg btn-success play-command play-command-next" th:text="#{play.next}"></button>
 									<button type="button" class="btn btn-lg btn-success play-command play-command-show" th:text="#{play.show}"></button>
 				              </div>
-				            
+				            <div class="my-card-footer">
+				                <span class="statistic"></span>
+				                <div class="change-language">
+									<img src="/css/blank.gif" class="flag">
+									<i class="fa fa-exchange"></i>
+								    <img src="/css/blank.gif" class="flag">
+							    </div>
+					   </div>
 				       </div>
 				      
 				</div>
