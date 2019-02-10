@@ -1,13 +1,17 @@
 package de.frittenburger.controller;
 
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -95,10 +99,22 @@ public class DatasetController implements DatasetApi {
 		try
 		{
 			UploadBucket bucket = repository.readBucket(bucketId);
+
+			 HttpHeaders headers = new HttpHeaders();
+	         
+	         if(filename.endsWith(".json"))
+	         {
+	        	 headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+	         }
+	         byte data[] = repository.readFile(bucket, filename);
 	
-			byte data[] = repository.readFile(bucket, filename);
-	
-			return ok(new ByteArrayResource(data));
+			
+
+			 return ok().headers(headers)
+			            .contentLength(data.length)
+			            .body(new ByteArrayResource(data));
+			
+			
 		}
 		catch(Exception e)
 		{

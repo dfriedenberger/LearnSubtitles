@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,6 +17,7 @@ import de.frittenburger.model.BucketMetadata;
 import de.frittenburger.model.UploadBucket;
 import de.frittenburger.srt.SrtCluster;
 import de.frittenburger.srt.SrtMergeReader;
+import de.frittenburger.srt.SrtMergeReaderWrapper;
 
 public class RepositoryServiceImpl implements RepositoryService {
 
@@ -62,6 +62,8 @@ public class RepositoryServiceImpl implements RepositoryService {
 
 		SrtMergeReader reader = new SrtMergeReader(data);
 		
+		SrtMergeReaderWrapper wrapper = new SrtMergeReaderWrapper(reader);
+		
 		Set<String> languages = new HashSet<String>();
 		List<SrtCluster> clusters = reader.read();
 		
@@ -69,8 +71,8 @@ public class RepositoryServiceImpl implements RepositoryService {
 		{
 			languages.addAll(clusters.get(i).getCounter().keySet());
 		}
-		md.setCount(clusters.size());
-		md.setLanguages(languages.stream().sorted().collect(Collectors.toList()));
+		md.setCount(wrapper.size());
+		md.setLanguages(wrapper.getLanguages());
 		
 		return md;
 	}

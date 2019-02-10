@@ -1,0 +1,8 @@
+#Level0-30 size=17
+you, i, the, to, a, it, and, that, of, is, in, what, we, me, this, he, for
+#Level1-15 size=28
+my, on, have, your, do, no, was, not, are, don, be, know, can, with, but, all, so, just, here, there, they, like, get, she, go, if, right, out
+#Level2-7 size=23
+about, up, him, at, now, one, come, oh, her, how, well, will, want, got, yeah, think, see, as, who, good, why, did, let
+#Level3-3 size=14
+from, his, yes, when, going, l, an, time, back, okay, look, us, where, them

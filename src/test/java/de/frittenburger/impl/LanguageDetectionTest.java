@@ -4,9 +4,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import de.frittenburger.impl.EncodingDetectorServiceImpl;
 import de.frittenburger.impl.LanguageDetectorServiceImpl;
-import de.frittenburger.interfaces.EncodingDetectorService;
 import de.frittenburger.interfaces.LanguageDetectorService;
 
 public class LanguageDetectionTest {

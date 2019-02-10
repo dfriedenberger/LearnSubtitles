@@ -1,0 +1,8 @@
+#Level0-30 size=17
+de, que, no, a, la, el, y, es, en, lo, un, por, qué, me, una, los, se
+#Level1-15 size=40
+te, con, para, está, mi, si, pero, sí, bien, eso, su, las, yo, del, como, tu, aquí, al, más, le, esto, todo, ya, estoy, muy, ahora, esta, ha, vamos, algo, así, bueno, hay, tengo, él, cuando, estás, sé, tú, nada
+#Level2-7 size=43
+nos, este, cómo, o, he, ser, puedo, tiene, quiero, ella, hacer, fue, gracias, era, vez, sólo, soy, todos, porque, son, tienes, creo, sabes, estaba, voy, eres, puede, ese, usted, entonces, hola, casa, verdad, tan, solo, sus, quién, dos, nunca, tiempo, esa, oh, dónde
+#Level3-3 size=26
+va, favor, quieres, señor, siento, mucho, mí, mejor, hace, decir, has, también, sobre, dios, sin, tenemos, están, ti, puedes, hombre, ver, vida, alguien, siempre, hasta, cosas

@@ -2,6 +2,7 @@ package de.frittenburger.srt;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,8 +18,10 @@ import java.util.regex.Pattern;
 
 
 
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 
 
 import de.frittenburger.controller.PageController;
@@ -31,7 +34,7 @@ public class SrtMergeReader {
 	private final InputStream is;
 
 
-	public SrtMergeReader(String txtFile) throws IOException
+	public SrtMergeReader(File txtFile) throws IOException
 	{
 		this.is = new FileInputStream(txtFile);
 	}

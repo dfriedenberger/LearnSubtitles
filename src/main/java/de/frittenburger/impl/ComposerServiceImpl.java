@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.frittenburger.interfaces.ComposerService;
 import de.frittenburger.interfaces.SrtMergerService;
+import de.frittenburger.interfaces.TranslationService;
 import de.frittenburger.interfaces.UnzipService;
 import de.frittenburger.interfaces.UploadRepository;
 import de.frittenburger.model.UploadBucket;
@@ -23,6 +24,7 @@ public class ComposerServiceImpl implements ComposerService {
 	
 	private final UnzipService unzipService;
 	private final SrtMergerService srtMergerService;
+	private final TranslationService translationService;
 
 	private final String bucketId;
 	private int state = 0;
@@ -30,11 +32,13 @@ public class ComposerServiceImpl implements ComposerService {
 
 
 	public ComposerServiceImpl(UploadRepository repository, String bucketId,
-			UnzipService unzipService,SrtMergerService srtMergerService) {
+			UnzipService unzipService,SrtMergerService srtMergerService,
+			TranslationService translationService) {
 		this.repository = repository;
 		this.bucketId = bucketId;
 		this.unzipService = unzipService;
 		this.srtMergerService = srtMergerService;
+		this.translationService = translationService;
 	}
 
 	@Override
@@ -87,12 +91,16 @@ public class ComposerServiceImpl implements ComposerService {
 			
 			}
 			
+			//Mergefile
 			File mergeFile = new File(bucket.getPayload(),"merge_gen.txt");
-
 			srtMergerService.merge(srtFiles.toArray(new File[0]),mergeFile);
-			
 			repository.createManifest(bucket, mergeFile);
-		
+			
+			//TranslationFile
+			File translationFile = new File(bucket.getPayload(),"translation_gen.json");
+			translationService.translate(mergeFile,translationFile);
+			repository.createManifest(bucket, translationFile);
+
 			state = 99;
 		} catch (Exception e) {
 			logger.error(e);

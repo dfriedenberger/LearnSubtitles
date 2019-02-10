@@ -1,7 +1,6 @@
 package de.frittenburger.controller;
 
 
-import static org.springframework.http.ResponseEntity.ok;
 
 import java.util.List;
 import java.io.IOException;
@@ -63,6 +62,7 @@ public class PageController {
 		List<String> languages = md.getLanguages();
 		model.put("language0", languages.get(0));
 		model.put("language1", languages.get(1));
+		model.put("title", md.getTitle());
 
 		
 		if (logger.isInfoEnabled()) {

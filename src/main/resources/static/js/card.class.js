@@ -1,4 +1,13 @@
+jQuery.fn.highlight = function (str, text) {
+    var regex = new RegExp(str, "gi");
+    return this.each(function () {
+        this.innerHTML = this.innerHTML.replace(regex, function(matched) {
 
+            return '<span class="highlight" data-title="'+text+'">'+matched+'</span>';
+
+        });
+    });
+};
    
 CardManager = function(language0,language1,bucketId)
 {
@@ -22,9 +31,6 @@ CardManager = function(language0,language1,bucketId)
 
     }
    
-  
- 
-
     this.setDataset = function(dataset)
     {
         this.dataset = dataset;
@@ -43,7 +49,7 @@ CardManager = function(language0,language1,bucketId)
         var manager = this;
 
         var list = this.dataset[this.ix];
-    
+
         //cleanup
         $('.tr-box').empty();
         $('.tx-box').empty();
@@ -53,24 +59,43 @@ CardManager = function(language0,language1,bucketId)
         var percent = parseInt(100 * this.ix  / this.dataset.length);
 
         $('.statistic').text( (this.ix +1) +"/"+this.dataset.length+" ("+percent+"%)");
-        $.each( list , function( key, value ) {
-        
-            if(value.lang == manager.language1)
-            {
-                container = $('.tr-box');
-            }
-            else
-            {
-                container = $('.tx-box');
-            }
-            
-            $.each( value.text, function( key, value ) {
-                container.append("<span>"+value+"</span> ");
-            });	
+
+
+        var l1 = list[manager.language0];
+        console.log(l1);
+        $('.tx-box').append(l1.text);
+
+
+        $(l1.annotated).each(function(a,annotation) {
+            var htmlInfo = "";
+            $(annotation.info).each(function(i, info) {
+                htmlInfo += info + '<br />';
+            });
+            $(annotation.words).each(function(w, word) {
+                $('.tx-box').highlight(word, htmlInfo);
+            });
+        });
+
+        $('.highlight').each(function(k,val) {
+            var data = $(val).data("title");
+
+            new Tooltip($(val), {
+                placement: 'bottom', // or bottom, left, right, and variations
+                title: data,
+                html: true,
+                container: "body",
+                template: '<div class="tooltip1" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
+            })
 
         });
 
-        $('.tr-box').find("span").hide(0);
+
+        var l2 = list[manager.language1];
+
+        console.log(l2);
+
+        $('.tr-box').append("<p>" + l2.text + "</p>");      
+        $('.tr-box').find("p").hide(0);
 
     }
     this._toFlag = function(lang) {
@@ -91,6 +116,7 @@ CardManager = function(language0,language1,bucketId)
         $(flags[1]).removeClass("flag-"+this._toFlag(this.language0));
         $(flags[1]).addClass("flag-"+this._toFlag(this.language1));
     }
+
     this._saveState = function()
     {
         var data = { 
@@ -109,16 +135,16 @@ CardManager = function(language0,language1,bucketId)
 		$('.play-command-show').click(function(ev){
             ev.preventDefault();
 
-            $('.tr-box').find("span").fadeIn(500);
+            $('.tr-box').find("p").fadeIn(500);
             $('.play-command-show').hide(0);
             $('.play-command-next').show(0);
 
         });
         
         $('.play-command-next').click(function(ev){
-            this.ix++;
-
             ev.preventDefault();
+
+            manager.ix++;
             manager._saveState();
             manager._showCard();
 

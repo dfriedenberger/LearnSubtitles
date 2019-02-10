@@ -4,6 +4,9 @@
 		
 		<div th:fragment="header-js-css-core">
 			<script src="/js/jquery-3.3.1.min.js"></script>
+			<script src="/js/popper.min.js"></script>
+			<script src="/js/tooltip.min.js"></script>
+			
 	      	<script src="/js/bootstrap-4.2.1.min.js"></script>
 	      	<script src="/js/handlebars-v4.0.12.js"></script>
 	      	
@@ -83,8 +86,10 @@
 	  
 	   	  <a class="navbar-brand" href="/">
     		<img src="/css/reindeer.svg" width="30" height="30" alt="">
-    		<span>subtítulo</span>
+    		<span th:text="${title}">subtítulo</span>
+    		
   		  </a>
+  		  
   		  <div class="navbar-header">
   		     
   		    <ul class="navbar-nav">

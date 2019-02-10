@@ -1,0 +1,8 @@
+#Level0-30 size=22
+ich, sie, das, ist, du, nicht, die, es, und, der, wir, was, zu, er, ein, in, mir, mit, ja, den, wie, mich
+#Level1-15 size=38
+auf, dass, eine, aber, so, hat, hier, haben, sind, für, von, dich, war, wenn, ihr, habe, nein, an, bin, noch, da, dir, nur, einen, sich, uns, hast, dem, kann, sein, auch, ihn, schon, als, jetzt, gut, mal, aus
+#Level2-7 size=33
+um, meine, dann, wird, im, bist, mein, doch, alles, keine, weiß, oder, nach, s, werden, nichts, man, wo, ihnen, etwas, muss, will, geht, oh, mehr, also, bei, immer, bitte, warum, hab, vor, los
+#Level3-3 size=21
+können, wieder, sagen, machen, alle, sehr, mann, okay, gehen, denn, zum, tun, ihm, diese, danke, sehen, wer, einem, euch, komm, vielleicht

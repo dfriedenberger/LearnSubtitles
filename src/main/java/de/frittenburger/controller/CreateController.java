@@ -20,6 +20,7 @@ import de.frittenburger.api.CreateApi;
 import de.frittenburger.impl.ComposerEngine;
 import de.frittenburger.impl.ComposerServiceImpl;
 import de.frittenburger.impl.SrtMergerServiceImpl;
+import de.frittenburger.impl.TranslationServiceImpl;
 import de.frittenburger.impl.UnzipServiceImpl;
 import de.frittenburger.impl.UploadRepositoryImpl;
 import de.frittenburger.interfaces.UploadRepository;
@@ -102,7 +103,8 @@ public class CreateController implements CreateApi {
 					ComposerEngine.getInstance().enqueue(
 							new ComposerServiceImpl(repository,
 									bucketCommand.getId(),
-							new UnzipServiceImpl(),new SrtMergerServiceImpl()));
+							new UnzipServiceImpl(),new SrtMergerServiceImpl(),
+							new TranslationServiceImpl()));
 					break;
 				default:
 					throw new RuntimeException("bucketId "+bucketCommand.getId()+" yet started");

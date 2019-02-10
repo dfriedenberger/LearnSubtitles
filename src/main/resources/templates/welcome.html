@@ -138,7 +138,7 @@
 		    var database = new Database();
 		     
 		     
-		     
+		    
 		    urlParam = function(url,name) {
 			    var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(url);
 			    if (results==null) {
@@ -207,7 +207,9 @@
 			});
 		    
 		    var config = database.read("configuration");
-		    if(config == undefined)
+		    var nativeLanguage = '[[${#locale}]]';
+		    
+		    if(config == undefined || config.language != nativeLanguage)
 		    {
 		    	$('#nativelanguage').modal('show');
 		    }

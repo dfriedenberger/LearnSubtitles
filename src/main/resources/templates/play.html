@@ -83,7 +83,7 @@
 		    
 		    
 			$.ajax({
-	           url: "/api/v1/dataset/" + bucketId,
+	           url: "/api/v1/dataset/" + bucketId+"/translation_gen.json",
 	           context : this,
 	    	}).then(function(dataset) {
 			      cardManager.setDataset(dataset);
