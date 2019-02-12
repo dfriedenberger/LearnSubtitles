@@ -1,27 +1,20 @@
 package de.frittenburger.impl;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
+
 
 import de.frittenburger.interfaces.BaseWordService;
 import de.frittenburger.interfaces.Dictionary;
 import de.frittenburger.interfaces.LanguageWordAnalyser;
 import de.frittenburger.model.Annotation;
-import de.frittenburger.model.Token;
 import de.frittenburger.model.TokenList;
-import de.frittenburger.model.Translation;
 
-public class SpanishDingLanguageWordAnalyser implements LanguageWordAnalyser {
+public class LanguageWordAnalyserImpl implements LanguageWordAnalyser {
 
 	private final BaseWordService baseWordService;
 	private final Dictionary dictionary;
-	public SpanishDingLanguageWordAnalyser(Dictionary dictionary,BaseWordService baseWordService) {
+	public LanguageWordAnalyserImpl(Dictionary dictionary,BaseWordService baseWordService) {
 		this.baseWordService = baseWordService;
 		this.dictionary = dictionary;
 	}

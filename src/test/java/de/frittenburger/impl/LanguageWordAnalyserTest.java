@@ -9,17 +9,17 @@ import org.junit.Test;
 
 import de.frittenburger.interfaces.LanguageWordAnalyser;
 
-public class SpanishDingLanguageWordAnalyserTest {
+public class LanguageWordAnalyserTest {
 
 	@Test
 	public void test() throws IOException {
 		
-		ClassLoader classLoader = SpanishDingLanguageWordAnalyser.class.getClassLoader();
+		ClassLoader classLoader = LanguageWordAnalyserImpl.class.getClassLoader();
 		File fileDict = new File(classLoader.getResource("dict/es-de/dict.txt").getFile());
 		File fileVerbs = new File(classLoader.getResource("dict/es-de/verbs.txt").getFile());
 
 		
-		LanguageWordAnalyser analyser = new SpanishDingLanguageWordAnalyser(new DingDictionary(fileDict),new SpanishVerbService(fileVerbs));
+		LanguageWordAnalyser analyser = new LanguageWordAnalyserImpl(new DingDictionary(fileDict),new SpanishVerbService(fileVerbs));
 		Tokenizer tokenizer = new Tokenizer();
 		
 		assertNotNull(analyser.analyse(tokenizer.tokenize("venir"), 0));

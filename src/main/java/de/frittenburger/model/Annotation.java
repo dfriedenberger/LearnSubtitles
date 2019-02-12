@@ -11,9 +11,11 @@ public class Annotation {
 	public List<Integer> getIndices() {
 		return indices;
 	}
+	
 	public List<String> getInfos() {
 		return infos;
 	}
+	
 	@Override
 	public String toString() {
 		return "Annotation [indices=" + indices + ", infos=" + infos + "]";

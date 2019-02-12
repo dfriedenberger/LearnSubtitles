@@ -2,9 +2,9 @@ package de.frittenburger.impl;
 
 import java.util.HashMap;
 
-import de.frittenburger.model.AnnotatedText;
+import de.frittenburger.model.CardTextCollection;
 
-public class AnnotatedRecord extends HashMap<String,AnnotatedText>{
+public class AnnotatedRecord extends HashMap<String,CardTextCollection>{
 
 	/**
 	 * 

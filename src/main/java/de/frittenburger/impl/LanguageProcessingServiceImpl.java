@@ -1,18 +1,14 @@
 package de.frittenburger.impl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import de.frittenburger.interfaces.LanguageProcessingService;
 import de.frittenburger.interfaces.LanguageWordAnalyser;
 import de.frittenburger.model.Annotation;
-import de.frittenburger.model.Token;
 import de.frittenburger.model.TokenList;
-import de.frittenburger.model.Translation;
 
 public class LanguageProcessingServiceImpl implements LanguageProcessingService {
 

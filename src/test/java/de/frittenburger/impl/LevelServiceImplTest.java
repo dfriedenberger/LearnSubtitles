@@ -15,7 +15,7 @@ public class LevelServiceImplTest {
 	public void test() throws IOException {
 		
 		ClassLoader classLoader1 = LevelServiceImpl.class.getClassLoader();
-		File fileLevel = new File(classLoader1.getResource("dict/es-de/frequency.txt").getFile());
+		File fileLevel = new File(classLoader1.getResource("dict/es/frequency.txt").getFile());
 		
 		LevelService service = new LevelServiceImpl(fileLevel);
 		
@@ -23,7 +23,7 @@ public class LevelServiceImplTest {
 		assertEquals(1,service.testLevel("nada"));
 		assertEquals(2,service.testLevel("puedo"));
 		assertEquals(3,service.testLevel("mucho"));
-		assertEquals(4,service.testLevel("venir"));
+		assertEquals(9,service.testLevel("venir"));
 
 	}
 

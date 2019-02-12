@@ -17,7 +17,7 @@ public class SpanishVerbServiceTest {
 	@Test
 	public void test() throws IOException {
 		
-		ClassLoader classLoader = SpanishDingLanguageWordAnalyser.class.getClassLoader();
+		ClassLoader classLoader = LanguageWordAnalyserImpl.class.getClassLoader();
 
 		File fileVerbs = new File(classLoader.getResource("dict/es-de/verbs.txt").getFile());
 

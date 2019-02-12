@@ -2,7 +2,6 @@ package de.frittenburger.interfaces;
 
 import java.util.List;
 
-import de.frittenburger.model.Token;
 import de.frittenburger.model.TokenList;
 
 public interface BaseWordService {

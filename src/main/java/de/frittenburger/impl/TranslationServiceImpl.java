@@ -14,11 +14,12 @@ import de.frittenburger.interfaces.LanguageProcessingService;
 import de.frittenburger.interfaces.LanguageWordAnalyser;
 import de.frittenburger.interfaces.LevelService;
 import de.frittenburger.interfaces.TranslationService;
-import de.frittenburger.model.Annotated;
-import de.frittenburger.model.AnnotatedText;
+import de.frittenburger.model.CardTextAnnotation;
+import de.frittenburger.model.CardTextCollection;
 import de.frittenburger.model.Annotation;
 import de.frittenburger.model.Token;
 import de.frittenburger.model.TokenList;
+import de.frittenburger.model.CardTextToken;
 import de.frittenburger.srt.SrtMergeReader;
 import de.frittenburger.srt.SrtMergeReaderWrapper;
 
@@ -34,14 +35,14 @@ public class TranslationServiceImpl implements TranslationService {
 
 	public TranslationServiceImpl() throws IOException {
 		
-		ClassLoader classLoader = SpanishDingLanguageWordAnalyser.class.getClassLoader();
+		ClassLoader classLoader = LanguageWordAnalyserImpl.class.getClassLoader();
 
 		//de,es
 		{
 			File fileVerbs = new File(classLoader.getResource("dict/es-de/verbs.txt").getFile());
 			BaseWordService baseWordService = new SpanishVerbService(fileVerbs);
 			File fileDict = new File(classLoader.getResource("dict/es-de/dict.txt").getFile());
-			LanguageWordAnalyser analyser = new SpanishDingLanguageWordAnalyser(new DingDictionary(fileDict),baseWordService);
+			LanguageWordAnalyser analyser = new LanguageWordAnalyserImpl(new DingDictionary(fileDict),baseWordService);
 			LanguageProcessingService languageProcessingService = new LanguageProcessingServiceImpl(analyser);
 			processingServices.put("es-de",languageProcessingService);
 		}
@@ -49,7 +50,7 @@ public class TranslationServiceImpl implements TranslationService {
 			File fileVerbs = new File(classLoader.getResource("dict/de-es/verbs.txt").getFile());
 			BaseWordService baseWordService = new SpanishVerbService(fileVerbs);
 			File fileDict = new File(classLoader.getResource("dict/de-es/dict.txt").getFile());
-			LanguageWordAnalyser analyser = new SpanishDingLanguageWordAnalyser(new DingDictionary(fileDict),baseWordService);
+			LanguageWordAnalyser analyser = new LanguageWordAnalyserImpl(new DingDictionary(fileDict),baseWordService);
 			LanguageProcessingService languageProcessingService = new LanguageProcessingServiceImpl(analyser);
 			processingServices.put("de-es",languageProcessingService);
 		}
@@ -60,7 +61,7 @@ public class TranslationServiceImpl implements TranslationService {
 			File fileVerbs = new File(classLoader.getResource("dict/en-de/verbs.txt").getFile());
 			BaseWordService baseWordService = new EnglishVerbService(fileVerbs);
 			File fileDict = new File(classLoader.getResource("dict/en-de/dict.txt").getFile());
-			LanguageWordAnalyser analyser = new SpanishDingLanguageWordAnalyser(new DingDictionary(fileDict),baseWordService);
+			LanguageWordAnalyser analyser = new LanguageWordAnalyserImpl(new DingDictionary(fileDict),baseWordService);
 			LanguageProcessingService languageProcessingService = new LanguageProcessingServiceImpl(analyser);
 			processingServices.put("en-de",languageProcessingService);
 		}
@@ -68,7 +69,7 @@ public class TranslationServiceImpl implements TranslationService {
 			File fileVerbs = new File(classLoader.getResource("dict/de-en/verbs.txt").getFile());
 			BaseWordService baseWordService = new GermanVerbService(fileVerbs);
 			File fileDict = new File(classLoader.getResource("dict/de-en/dict.txt").getFile());
-			LanguageWordAnalyser analyser = new SpanishDingLanguageWordAnalyser(new DingDictionary(fileDict),baseWordService);
+			LanguageWordAnalyser analyser = new LanguageWordAnalyserImpl(new DingDictionary(fileDict),baseWordService);
 			LanguageProcessingService languageProcessingService = new LanguageProcessingServiceImpl(analyser);
 			processingServices.put("de-en",languageProcessingService);
 		}
@@ -123,11 +124,11 @@ public class TranslationServiceImpl implements TranslationService {
 				System.err.println("Record "+i+" text1 "+text1+" text2 "+text2);
 				continue;
 			}
-			AnnotatedText t1 = getRecord(levelService1,processingService1,text1);
+			CardTextCollection t1 = getRecord(levelService1,processingService1,text1);
 			rec.put(lang[0],t1);
 			System.out.println(mapper.writeValueAsString(t1));
 
-			AnnotatedText t2 = getRecord(levelService2,processingService2,text2);
+			CardTextCollection t2 = getRecord(levelService2,processingService2,text2);
 			rec.put(lang[1],t2);
 			System.out.println(mapper.writeValueAsString(t2));
 		
@@ -141,17 +142,27 @@ public class TranslationServiceImpl implements TranslationService {
 	}
 
 	
-	private AnnotatedText getRecord(LevelService translationService,
+	private CardTextCollection getRecord(LevelService translationService,
 			LanguageProcessingService processingService, String text) {
 		Tokenizer tokenizer = new Tokenizer();
 
 		TokenList tokens = tokenizer.tokenize(text);
+		List<CardTextToken> cardText = new ArrayList<CardTextToken>();
 
-		List<Annotated> annotated = new ArrayList<Annotated>();
+		for(Token token : tokens)
+		{
+			CardTextToken cardToken = new CardTextToken();
+			cardToken.setData(token.getText());
+			cardText.add(cardToken);
+		}
+		
+		Map<String,CardTextAnnotation> annotated = new HashMap<String,CardTextAnnotation>();
+		int annotationId = 0;
 		for(Annotation annotation : processingService.process(tokens))
 		{
 			int maxLevel = 0;
-			List<String> words = new ArrayList<String>();
+			
+			annotationId++;
 			for(int ix : annotation.getIndices())
 			{
 				Token t = tokens.get(ix);
@@ -162,22 +173,21 @@ public class TranslationServiceImpl implements TranslationService {
 				{
 					maxLevel = level;
 				}
-				words.add(t.getText());
+				cardText.get(ix).setAnnotationId(""+annotationId);
 			}
 			
-			if(maxLevel > 3)
-			{
-				Annotated a = new Annotated();
-				a.setInfo(annotation.getInfos());
-				a.setWords(words);
-				annotated.add(a);
-			}
+			
+			CardTextAnnotation a = new CardTextAnnotation();
+			a.setInfo(annotation.getInfos());
+			a.setLevel(maxLevel);
+			annotated.put(""+annotationId,a);
+			
 			
 		}
 		
-		AnnotatedText atxt = new AnnotatedText();
-		atxt.setText(text);
-		atxt.setAnnotated(annotated);
+		CardTextCollection atxt = new CardTextCollection();
+		atxt.setTextToken(cardText);
+		atxt.setTextAnnotation(annotated);
 		return atxt;
 	}
 

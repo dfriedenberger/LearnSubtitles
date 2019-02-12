@@ -63,18 +63,37 @@ CardManager = function(language0,language1,bucketId)
 
         var l1 = list[manager.language0];
         console.log(l1);
-        $('.tx-box').append(l1.text);
 
 
-        $(l1.annotated).each(function(a,annotation) {
-            var htmlInfo = "";
-            $(annotation.info).each(function(i, info) {
-                htmlInfo += info + '<br />';
-            });
-            $(annotation.words).each(function(w, word) {
-                $('.tx-box').highlight(word, htmlInfo);
-            });
+        var html1 = "";
+        $(l1.textToken).each(function(w,word) {
+
+            if(word.annotationId)
+            {
+                var annotation = l1.textAnnotation[word.annotationId];
+                console.log(annotation);
+
+
+                var htmlInfo = "";
+                $(annotation.info).each(function(i, info) {
+                    htmlInfo += info + '<br />';
+                    if(i == 0)
+                        htmlInfo += '---------<br />';
+                });
+
+                if(annotation.level > 8)
+                {
+
+                    html1 += '<span class="highlight" data-title="'+htmlInfo+'">' + word.data + '</span>';
+                    return;
+                }
+            }
+           
+            html1 += word.data;
+            
         });
+        $('.tx-box').append("<p>" + html1 + "</p>");
+
 
         $('.highlight').each(function(k,val) {
             var data = $(val).data("title");
@@ -91,10 +110,14 @@ CardManager = function(language0,language1,bucketId)
 
 
         var l2 = list[manager.language1];
+        console.log(l2.textToken);
 
-        console.log(l2);
 
-        $('.tr-box').append("<p>" + l2.text + "</p>");      
+        var html2 = "";
+        $(l2.textToken).each(function(w,word) {
+            html2 += word.data;
+        });
+        $('.tr-box').append("<p>" + html2 + "</p>");      
         $('.tr-box').find("p").hide(0);
 
     }

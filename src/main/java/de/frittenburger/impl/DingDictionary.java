@@ -49,6 +49,7 @@ public class DingDictionary implements Dictionary {
 					int i1 = 0;
 					int i2 = ix;
 					Set<Integer> indicies = new HashSet<Integer>();
+					String original = "";
 					while(true)
 					{
 						if(i1 == candidate.size()) break;
@@ -56,6 +57,7 @@ public class DingDictionary implements Dictionary {
 						Token t1 = candidate.get(i1);
 						Token t2 = tokens.get(i2);
 					
+						original+= t1.getText();
 						
 						if(t1.getType() == Token.SPACE)
 						{
@@ -81,6 +83,7 @@ public class DingDictionary implements Dictionary {
 						{
 							//match
 							Annotation annotation = new Annotation();
+							annotation.getInfos().add(original);
 							annotation.getInfos().addAll(translation.getAnnotations());
 							annotation.getIndices().addAll(indicies);
 							return annotation;

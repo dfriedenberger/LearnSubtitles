@@ -33,7 +33,7 @@
         
     <script id="entry-template" type="text/x-handlebars-template">
   		<li>
-				<img alt="Independence Day" src="{{image}}" />
+				<img src="{{image}}" />
 				<div class="info">
 					<h2 class="title">{{title}}</h2>
 					<p class="desc">{{description}}</p>
@@ -63,14 +63,35 @@
 	<div class="jumbotron jumbotron-fluid">
 		  <div class="container">
 		    <h1 class="display-4">subtítulo</h1>
-		    <p class="lead" th:text="#{welcome.lead}"></p>
+		    
 		  </div>
 	</div>
   		
   		<div class="container">    
   		
   	
-  		
+  		       <div class="row justify-content-md-center">
+			        <div class="col col-lg-8">
+			        
+						 <div class="card welcome-card">
+						    <div class="card-header">
+						      <h5 class="mb-0" th:text="#{welcome.lead}">
+						      </h5>
+						    </div>
+						    <div>
+						      <div class="card-body">
+
+								<p th:text="#{welcome.text1}"></p>
+								<p th:text="#{welcome.text2}"></p>
+								
+								
+						      </div>
+						    </div>
+  						</div>
+  						
+  						
+					</div>
+				</div>
   		        
   		        <!-- 
 		      	<div class="row justify-content-md-center searchbar">

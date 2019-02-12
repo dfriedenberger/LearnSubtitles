@@ -1,8 +1,18 @@
-#Level0-30 size=17
+#Level0-30.0 size=17
 you, i, the, to, a, it, and, that, of, is, in, what, we, me, this, he, for
-#Level1-15 size=28
+#Level1-45.0 size=28
 my, on, have, your, do, no, was, not, are, don, be, know, can, with, but, all, so, just, here, there, they, like, get, she, go, if, right, out
-#Level2-7 size=23
+#Level2-52.0 size=23
 about, up, him, at, now, one, come, oh, her, how, well, will, want, got, yeah, think, see, as, who, good, why, did, let
-#Level3-3 size=14
+#Level3-55.0 size=14
 from, his, yes, when, going, l, an, time, back, okay, look, us, where, them
+#Level4-57.0 size=12
+take, would, were, then, or, had, been, tell, our, man, some, say
+#Level5-59.0 size=12
+really, gonna, hey, could, didn, by, has, something, too, need, more, way
+#Level6-61.0 size=16
+down, make, never, very, only, over, people, because, little, please, love, give, should, sorry, said, mean
+#Level7-63.0 size=20
+off, am, any, two, thank, even, much, doing, sure, thing, these, help, first, into, anything, still, sir, life, nothing, find
+#Level8-65.0 size=24
+god, day, work, again, must, their, won, stop, maybe, call, wait, before, other, away, talk, after, night, home, uh, than, thought, put, great, last
