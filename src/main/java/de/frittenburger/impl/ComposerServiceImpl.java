@@ -92,16 +92,19 @@ public class ComposerServiceImpl implements ComposerService {
 			}
 			
 			//Mergefile
+			logger.info("Create Mergefile");
 			File mergeFile = new File(bucket.getPayload(),"merge_gen.txt");
 			srtMergerService.merge(srtFiles.toArray(new File[0]),mergeFile);
 			repository.createManifest(bucket, mergeFile);
 			
 			//TranslationFile
+			logger.info("Create Translationfile");
 			File translationFile = new File(bucket.getPayload(),"translation_gen.json");
 			translationService.translate(mergeFile,translationFile);
 			repository.createManifest(bucket, translationFile);
-
+			Thread.sleep(60 * 1000);
 			state = 99;
+			logger.info("Ready");
 		} catch (Exception e) {
 			logger.error(e);
 			state = -2;

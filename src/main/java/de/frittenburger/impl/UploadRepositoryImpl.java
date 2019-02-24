@@ -17,7 +17,6 @@ import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.frittenburger.controller.PageController;
 import de.frittenburger.interfaces.UploadRepository;
 import de.frittenburger.model.UploadBagitInfo;
 import de.frittenburger.model.UploadBucket;
@@ -25,17 +24,17 @@ import de.frittenburger.model.UploadManifest;
 
 public class UploadRepositoryImpl implements UploadRepository {
 
-	private static final Logger logger = LogManager.getLogger(PageController.class);
+	private static final Logger logger = LogManager.getLogger(UploadRepositoryImpl.class);
 
 	private static UploadRepository repository = null;
 	private final File root;
 	private final Map<String,UploadBucket> buckets = new HashMap<String,UploadBucket>();
 
-	private UploadRepositoryImpl(String path) throws IOException {
+	private UploadRepositoryImpl(File root) throws IOException {
 		
-		this.root = new File(path);
+		this.root = root;
 		if(!this.root.isDirectory())
-			throw new IllegalArgumentException(path + " has to be a directory");
+			throw new IllegalArgumentException(root + " has to be a directory");
 
 		//read all Buckets
 		for(File dir : this.root.listFiles())
@@ -66,7 +65,7 @@ public class UploadRepositoryImpl implements UploadRepository {
 		if(repository == null)
 		{
 			try {
-				repository = new UploadRepositoryImpl("upload");
+				repository = new UploadRepositoryImpl(new File("upload"));
 			} catch (IOException e) {
 				logger.error(e);
 			}

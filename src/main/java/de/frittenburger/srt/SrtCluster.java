@@ -22,6 +22,10 @@ public class SrtCluster extends ArrayList<SrtRecord> {
 		
 		return null;
 	}
+	
+	public SrtRecord getLast() {
+		return get(size() -1);
+	}
 
 	public SrtRecord getFirst(String lang) {
 		
@@ -36,6 +40,10 @@ public class SrtCluster extends ArrayList<SrtRecord> {
 		return null;
 	}
 	
+	public SrtRecord getFirst() {
+		return get(0);
+	}
+
 	public Map<String, Integer> getCounter() {
 		
 		Map<String,Integer> counter = new HashMap<String,Integer>();

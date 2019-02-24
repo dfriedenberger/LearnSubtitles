@@ -32,57 +32,121 @@ public class SpanishVerbService implements BaseWordService {
 	@Override
 	public TokenList find(TokenList tokens, int ix,List<Integer> indicies) {
 		
-		
 		if(ix >= tokens.size())
 			return null;
 		
 		String text = tokens.get(ix).getText();
-		
-		//INDICATIVO Presente
-		for(String ext : new String[]{"o","es","e" , "imos","ís","en"})
+		String text2 = null;
+		int ix2 = -1;
+		for(int i = ix+1;i < tokens.size();i++)
 		{
-			if(text.endsWith(ext))
-			{
-				String verb = cut(text,ext)+"ir";
-				if(verbs.contains(verb))
-				{
-					TokenList l = new TokenList();
-					l.add(new Token(verb));
-					indicies.add(ix);
-					return l;
-				}
-			}
+			if(tokens.get(i).getType() == Token.SPACE) continue;
+			if(tokens.get(i).getType() != Token.WORD) break;
+			text2 = tokens.get(i).getText();
+			ix2 = i;
+			break;
 		}
 		
-		for(String hab : new String[]{"he","has","ha" , "hemos","habéis","han"})
-			if(text.equals(hab))
-			{
-				//PARTICIPIO PASADO
-				for(int i = ix+1;i < tokens.size();i++)
-				{
-					String text2 = tokens.get(i).getText();
-					if(text2.endsWith("ado"))
-					{
-						String verb = cut(text2,"ado")+"ar";
-						if(verbs.contains(verb))
-						{
-							TokenList l = new TokenList();
-							l.add(new Token(verb));
-							indicies.add(ix);
-							indicies.add(i);
-							return l;			
-						}
-					}
-				}
-				
-			}
+		//INDICATIVO Presente
+		String verb = testverbext(text,"ir",new String[]{"o","es","e" , "imos","ís","en"});
+		if(verb == null)
+			verb = testverbext(text,"er",new String[]{"o","es","e" , "imos","ís","en"});
+		if(verb == null)
+			verb = testverbext(text,"ar",new String[]{"o","as","a" , "amos","áis","an"});
 		
+		if(verb != null)
+		{
+			TokenList l = new TokenList();
+			l.add(new Token(verb));
+			indicies.add(ix);
+			return l;
+		}
+	
+		//PARTICIPIO PASADO
+		if(text2 != null && ix2 > 1)
+		{
+		    //reflexive
+			verb = testRelexive(text,text2,"irse",new String[]{"o","es","e" , "imos","ís","en"});
+			if(verb == null)
+				verb = testRelexive(text,text2,"erse",new String[]{"o","es","e" , "imos","ís","en"});
+			if(verb == null)
+				verb = testRelexive(text,text2,"arse",new String[]{"o","as","a" , "amos","áis","an"});
+
+			if(verb == null)
+				verb = testHaber(text,text2,"ir","ido");
+		    if(verb == null)
+				verb = testHaber(text,text2,"er","ido");
+		    if(verb == null)
+				verb = testHaber(text,text2,"ar","ado");
+		    
+			if(verb != null)
+			{
+				TokenList l = new TokenList();
+				l.add(new Token(verb));
+				indicies.add(ix);
+				indicies.add(ix2);
+				return l;		
+			}
+		}
+				
 		
 		
 		return null;
 	}
 
 	
+	private String testRelexive(String text, String text2, String infext, String[] exts) {
+		
+		String refl[] = new String[]{"me","te","se" , "nos","os","se"};
+		for(int i = 0;i < refl.length;i++)
+		{
+			if(!text.equals(refl[i])) continue;
+			if(!text2.endsWith(exts[i])) break;
+					
+			String verb = cut(text2,exts[i])+infext;
+			if(verbs.contains(verb))
+			{
+				return verb;			
+			}
+		}
+		return null;
+	}
+
+
+	private String testHaber(String text, String text2, String extInf,
+			String participo) {
+		
+		for(String hab : new String[]{"he","has","ha" , "hemos","habéis","han"})
+		{
+			if(!text.equals(hab)) continue;
+			if(!text2.endsWith(participo)) break;
+					
+			String verb = cut(text2,participo)+extInf;
+			if(verbs.contains(verb))
+			{
+				return verb;			
+			}
+		}
+		return null;
+	}
+
+
+	private String testverbext(String text,String infext, String[] exts) {
+		for(String ext : exts)
+		{
+			if(text.endsWith(ext))
+			{
+				String verb = cut(text,ext)+infext;
+				if(verbs.contains(verb))
+				{
+				   return verb;
+				}
+			}
+		}
+		return null;
+	}
+
+
 	public String find(String text) {
 
 		//PARTICIPIO PASADO

@@ -9,8 +9,9 @@ import java.util.Map;
 
 public class SrtMerger {
 
+		
 	
-	
+
 	public List<SrtCluster> merge(SrtReader srtreader1, SrtReader srtreader2) throws IOException {
 
 		SrtCluster cluster = new SrtCluster();
@@ -101,10 +102,7 @@ public class SrtMerger {
 
 			}
 			
-			if(cl.size() > 16)
-			{
-				//System.out.println("Error: "+counter);
-			}
+			
 			
 		}
 		

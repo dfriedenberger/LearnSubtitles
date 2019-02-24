@@ -60,16 +60,22 @@
     
    
 	<main role="main">
+	
+	  
+	
 	<div class="jumbotron jumbotron-fluid">
 		  <div class="container">
 		    <h1 class="display-4">subtítulo</h1>
+		    
+		   
 		    
 		  </div>
 	</div>
   		
   		<div class="container">    
   		
-  	
+			
+  
   		       <div class="row justify-content-md-center">
 			        <div class="col col-lg-8">
 			        
@@ -152,14 +158,26 @@
 	
 	<footer th:replace="fragments/header :: header-fixed-footer"/>
 	
+	
+	
+    <input id="isAuthenticated" sec:authorize="isAuthenticated()" type="text" style="display:none" value="true"/>
+    <input id="isAuthenticated" sec:authorize="isAnonymous()" type="text" style="display:none" value="false"/>
+ 
     <script>
     
 		$( document ).ready(function() {
 		
-		    var database = new Database();
+		    var syncdb = $('#isAuthenticated').val();
+		
+		    var database = new Database(syncdb);
 		     
+		    $.when( 
+		    	database.sync("configuration")
+ 				/* , d2  */
+ 			).done(function () {
+		    	console.log("sync complete");
+		    });
 		     
-		    
 		    urlParam = function(url,name) {
 			    var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(url);
 			    if (results==null) {
@@ -200,7 +218,7 @@
 			   $.each( dataset, function( key, value ) {
 			   
 			       var data = database.read(value.id);
-			       var dataStr = localStorage.getItem(value.id);
+
 			       var percent = 0;
 			       var ix = 0;
 			       

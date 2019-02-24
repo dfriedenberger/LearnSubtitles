@@ -9,14 +9,14 @@ jQuery.fn.highlight = function (str, text) {
     });
 };
    
-CardManager = function(language0,language1,bucketId)
+CardManager = function(database,language0,language1,bucketId)
 {
     this.dataset = [];
     this.ix = 0;
     this.language0 = language0;
     this.language1 = language1;
     this.bucketId = bucketId;
-    this.database = new Database();
+    this.database = database;
 
     $('.play-command-next').hide(0);
 

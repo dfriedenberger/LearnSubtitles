@@ -61,5 +61,17 @@ public class IntegrationTest {
 		integrationTest("kammerflimmern");
 	}
 	
+	@Test
+	public void test5() throws IOException {
+		integrationTest("thepianist");
+	}
 	
+	@Test
+	public void test6() throws IOException {
+		integrationTest("alien");
+	}
+	@Test
+	public void test7() throws IOException {
+		integrationTest("deutschland");
+	}
 }

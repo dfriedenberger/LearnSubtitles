@@ -34,8 +34,7 @@ public class SpanishVerbServiceTest {
 		assertNotNull(service.find(tokenizer.tokenize("he echado"), 0, new ArrayList<Integer>()));
 		assertNotNull(service.find(tokenizer.tokenize("has echado"), 0, new ArrayList<Integer>()));
 		assertNotNull(service.find(tokenizer.tokenize("ha echado"), 0, new ArrayList<Integer>()));
-
-		
+		assertNotNull(service.find(tokenizer.tokenize("nos largamos"), 0, new ArrayList<Integer>()));
 		
 	}
 

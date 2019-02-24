@@ -11,7 +11,8 @@ import de.frittenburger.interfaces.ComposerService;
 
 public class ComposerEngine {
 
-	    private final Logger logger = LogManager.getLogger(ComposerEngine.class);
+	    @SuppressWarnings("unused")
+		private final Logger logger = LogManager.getLogger(ComposerEngine.class);
 		private List<ComposerService> workers = new ArrayList<ComposerService>();
 
 		private ComposerEngine () {
@@ -38,8 +39,8 @@ public class ComposerEngine {
 			{
 				workers.add(composerService);
 				new Thread(composerService).start();
+
 			}
-			
 		}
 		
 		private static ComposerEngine instance = null;

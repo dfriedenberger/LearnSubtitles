@@ -126,11 +126,11 @@ public class TranslationServiceImpl implements TranslationService {
 			}
 			CardTextCollection t1 = getRecord(levelService1,processingService1,text1);
 			rec.put(lang[0],t1);
-			System.out.println(mapper.writeValueAsString(t1));
+			//System.out.println(mapper.writeValueAsString(t1));
 
 			CardTextCollection t2 = getRecord(levelService2,processingService2,text2);
 			rec.put(lang[1],t2);
-			System.out.println(mapper.writeValueAsString(t2));
+			//System.out.println(mapper.writeValueAsString(t2));
 		
 			textes.add(rec);
 		}

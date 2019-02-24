@@ -7,7 +7,6 @@ public class Translation {
 
 	private final TokenList candidate;
 	private final List<String> annotations = new ArrayList<String>();
-	private boolean verb = false;
 	
 	public Translation(TokenList candidate)
 	{

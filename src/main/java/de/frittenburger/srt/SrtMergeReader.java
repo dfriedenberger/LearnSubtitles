@@ -12,24 +12,13 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
-
-
-
-
-
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
-
-import de.frittenburger.controller.PageController;
-
-
 public class SrtMergeReader {
 
-	private final Logger logger = LogManager.getLogger(PageController.class);
+	private final Logger logger = LogManager.getLogger(SrtMergeReader.class);
 
 	private final InputStream is;
 
@@ -53,6 +42,7 @@ public class SrtMergeReader {
 		String encoding = "UTF8";
 		BufferedReader in = null;
 		SrtCluster rec = null;
+		int error = 0;
 		try {
 
 			in = new BufferedReader(new InputStreamReader(is, encoding));
@@ -101,7 +91,8 @@ public class SrtMergeReader {
 					continue;
 				}
 				
-				logger.error(str);
+				error++;
+				
 				
 			}
 		} finally
@@ -110,6 +101,8 @@ public class SrtMergeReader {
 				in.close();
 		}
 		
+		if(error > 0)
+			logger.error(error+" errors");
 		
 		return records;
 	}

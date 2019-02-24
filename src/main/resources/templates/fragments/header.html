@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.sprinfgramework.org/schema/security/tags">
 	<head>
 		
 		<div th:fragment="header-js-css-core">
@@ -74,6 +74,22 @@
 		          <a class="nav-link" th:href="@{''(lang=es)}"><img src="/css/blank.gif" class="flag flag-es"></a>
 		      </li>
 		    </ul>
+		    <ul class="navbar-nav">
+		       
+		       <li sec:authorize="isAnonymous()"  class="nav-item">
+		         <a href="/login"><img src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y&s=30" class="rounded-circle"></a>
+		       </li>
+		       <li sec:authorize="isAuthenticated()" class="nav-item dropdown">
+		       
+		        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+		             <img th:src="@{${'https://www.gravatar.com/avatar/' + userid}(d=identicon,s=30)}" class="rounded-circle">		        </a>
+		        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+		            <form th:action="@{/logout}" method="post">
+		                <input type="submit" class="dropdown-item" value="Logout">
+                   </form>
+		        </div>
+		      </li>
+		    </ul>
 		  </div>
 	  
 	
@@ -117,7 +133,7 @@
 		        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 					<span th:text="#{language}">
 		        </a>
-		        <div class="dropdown-menu dropdown-menu-right bg-dark " aria-labelledby="navbarDropdown">
+		        <div class="dropdown-menu dropdown-menu-right bg-dark" aria-labelledby="navbarDropdown">
 		          <a class="nav-link" th:href="@{''(lang=de)}"><img src="/css/blank.gif" class="flag flag-de"> Deutsch</a>
 		          <a class="nav-link" th:href="@{''(lang=en)}"><img src="/css/blank.gif" class="flag flag-us"> English</a>
 		          <a class="nav-link" th:href="@{''(lang=es)}"><img src="/css/blank.gif" class="flag flag-es"> Espa&ntilde;ol</a>

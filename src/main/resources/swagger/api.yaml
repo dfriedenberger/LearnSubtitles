@@ -16,6 +16,8 @@ tags:
   description: "datasets for learning language"
 - name: "create"
   description: "create datasets"
+- name: "database"
+  description: "user database"
   
 schemes:
 - "https"
@@ -164,8 +166,62 @@ paths:
               $ref: "#/definitions/BucketState"
         400:
           description: "Invalid status value"
-    
-
+          
+  /database/{key}:
+    get:
+      tags:
+      - "database"
+      summary: "get data fir user"
+      description: ""
+      operationId: "readUserData"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "key"
+        in: "path"
+        description: "Datakey"
+        required: true
+        type: "string"
+      responses:
+        201:
+          description: "data"
+          schema:
+            type: object
+        400:
+          description: "Invalid status value"  
+    put:
+      tags:
+      - "database"
+      summary: "write User Data"
+      description: ""
+      operationId: "writeUserData"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "key"
+        in: "path"
+        description: "Data key"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "data"
+        description: "Data"
+        required: true
+        schema:
+          type: object
+      responses:
+        201:
+          description: "data"
+          schema:
+            type: object
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Bucket not found"
+        405:
+          description: "Validation exception"
   
 
 definitions:

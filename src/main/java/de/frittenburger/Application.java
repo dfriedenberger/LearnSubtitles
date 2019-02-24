@@ -1,10 +1,6 @@
 package de.frittenburger;
 
 import java.io.IOException;
-
-
-
-
 import java.util.Locale;
 
 import org.apache.logging.log4j.LogManager;
@@ -21,12 +17,14 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
 
+
 @SpringBootApplication
 public class Application implements WebMvcConfigurer {
 
     private static final Logger logger = LogManager.getLogger(Application.class);
 
 	public static void main(String[] args) throws IOException {
+		
 		
 		
 		if (logger.isInfoEnabled()) {
@@ -36,6 +34,8 @@ public class Application implements WebMvcConfigurer {
 		if (logger.isInfoEnabled()) {
 	          logger.info("Run Application");
 	    }	
+		
+		
 		SpringApplication.run(Application.class, args);
 	}
 	

@@ -58,7 +58,9 @@
 	
 	<footer th:replace="fragments/header :: header-fixed-footer"/>
 
-	
+	<input id="isAuthenticated" sec:authorize="isAuthenticated()" type="text" style="display:none" value="true"/>
+    <input id="isAuthenticated" sec:authorize="isAnonymous()" type="text" style="display:none" value="false"/>
+ 
     <script>
     
 		$( document ).ready(function() {
@@ -66,6 +68,9 @@
 		
 		    var bucketId = '[[${bucketId}]]';
 		    var nativeLanguage = '[[${#locale}]]';
+
+		    var syncdb = $('#isAuthenticated').val();
+
 		    
 		    var language0 = '[[${language0}]]';
 		    var language1 = '[[${language1}]]';
@@ -75,8 +80,16 @@
 		        language0 = language1;
 		        language1 = nativeLanguage;
 		    }
+		    var database = new Database(syncdb);
 		    
-		    var cardManager = new CardManager(language0,language1,bucketId);
+		    $.when( 
+		    	database.sync(bucketId)
+ 				/* , d2  */
+ 			).done(function () {
+		    	console.log("sync complete");
+		    });
+		    
+		    var cardManager = new CardManager(database,language0,language1,bucketId);
 		    
 		    
 		    
