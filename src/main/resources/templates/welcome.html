@@ -171,12 +171,7 @@
 		
 		    var database = new Database(syncdb);
 		     
-		    $.when( 
-		    	database.sync("configuration")
- 				/* , d2  */
- 			).done(function () {
-		    	console.log("sync complete");
-		    });
+		   
 		     
 		    urlParam = function(url,name) {
 			    var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(url);
@@ -217,41 +212,52 @@
 			   console.log(dataset);
 			   $.each( dataset, function( key, value ) {
 			   
-			       var data = database.read(value.id);
-
-			       var percent = 0;
-			       var ix = 0;
-			       
-				   if(data)
-				   {
-				        ix = data.ix + 1;
-				   }
 			   
-			   	   percent = parseInt(100 * ix / value.count);
-			   
-			       var context = { 
-			      			title: value.title, 
-			      		    description: value.description, 
-			      			image: value.image,
-			      			lang0 : toFlag(value.languages[0]),
-			      			lang1 : toFlag(value.languages[1]),
-			      			ix: ix,
-			      			count: value.count,
-			      			percent : percent,
-			      			link: '/play/'+value.id
-			      };
-			      var html    = template(context);
-		          $(".event-list").append(html);
+			        $.when( 
+		    			database.synchronize(value.id)
+		 			).done(function () {
+				   
+				       var data = database.read(value.id);
+				       
+				       var percent = 0;
+				       var ix = 0;
+				       
+					   if(data)
+					   {
+					        ix = data.ix + 1;
+					   }
+				   
+				   	   percent = parseInt(100 * ix / value.count);
+				   
+				       var context = { 
+				      			title: value.title, 
+				      		    description: value.description, 
+				      			image: value.image,
+				      			lang0 : toFlag(value.languages[0]),
+				      			lang1 : toFlag(value.languages[1]),
+				      			ix: ix,
+				      			count: value.count,
+				      			percent : percent,
+				      			link: '/play/'+value.id
+				      };
+				      var html    = template(context);
+			          $(".event-list").append(html);
+		           });
 			   });
 			});
 		    
-		    var config = database.read("configuration");
-		    var nativeLanguage = '[[${#locale}]]';
-		    
-		    if(config == undefined || config.language != nativeLanguage)
-		    {
-		    	$('#nativelanguage').modal('show');
-		    }
+		     $.when( 
+		    	database.synchronize("configuration")
+ 			).done(function () {
+	  			var config = database.read("configuration");
+			    var nativeLanguage = '[[${#locale}]]';
+			    
+			    if(config == undefined || config.language != nativeLanguage)
+			    {
+			    	$('#nativelanguage').modal('show');
+			    }		    
+		    });
+		  
 		    
 		});
 	</script>

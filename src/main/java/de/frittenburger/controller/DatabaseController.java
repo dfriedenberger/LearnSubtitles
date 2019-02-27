@@ -3,6 +3,7 @@ package de.frittenburger.controller;
 import static org.springframework.http.ResponseEntity.ok;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import javax.validation.Valid;
 
@@ -52,7 +53,9 @@ public class DatabaseController implements DatabaseApi {
 		try {
 			
 			Object obj = UserRepositoryImpl.getInstance().read(userId, key);
-
+			if(obj == null) 
+				obj = new HashMap<String,String>(); //Empty Json
+			
 			if (logger.isInfoEnabled()) {
 				logger.info("{} {} = {}",userId,key,obj);
 			}

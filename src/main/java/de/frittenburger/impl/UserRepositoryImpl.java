@@ -88,6 +88,7 @@ public class UserRepositoryImpl implements UserRepository {
 	public Map<String,String> read(String userId, String key) throws IOException {
 		
 		File f = getFileSecure(userId,key);
+		if(!f.exists()) return null;
 		return new ObjectMapper().readValue(f, new TypeReference<HashMap<String,String>>() {});
 	
 	}

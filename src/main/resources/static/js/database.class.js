@@ -1,23 +1,31 @@
 
 Database = function(sync)
 {
-    this.sync = sync;
-    this._version = 1;
-
-    this.sync = function(key) 
+    this.sync = sync== 'true'?true:false;
+    this._version = "1";
+   
+    this.synchronize = function(key) 
     {
         var d = $.Deferred();
         
-        if(this.sync) 
+        if(this.sync === true) 
         {
             $.ajax({
                 type: "GET",
                 url: "/api/v1/database/"+key,
                 cache: false,
                 contentType: "application/json",
-                success: function(data)
+                context: this,
+                success: function(dataStr)
                 {
-                    console.log(data);
+                    var data = typeof dataStr == 'string' ? JSON.parse(dataStr) : dataStr;
+                    console.log("recv",key,"=",data);
+
+                    if(data.version == this._version)
+                    {
+                        console.log("save",key);
+                        localStorage.setItem(key, JSON.stringify(data));	
+                    }
                 },
                 error: function (xhr, ajaxOptions, thrownError) {
                     console.log("Server response",xhr,thrownError);
@@ -56,7 +64,8 @@ Database = function(sync)
 
         console.log("sync " + this.sync);
 
-        if(!this.sync) return;
+        if(this.sync === false) return;
+
 
         $.ajax({
             type: "PUT",
