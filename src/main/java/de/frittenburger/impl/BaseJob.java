@@ -3,7 +3,6 @@ package de.frittenburger.impl;
 import java.util.Date;
 
 import de.frittenburger.interfaces.ComposerJob;
-import de.frittenburger.interfaces.UploadRepository;
 
 public abstract class BaseJob implements ComposerJob  {
 

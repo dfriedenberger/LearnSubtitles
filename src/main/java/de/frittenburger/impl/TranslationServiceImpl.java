@@ -7,6 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.frittenburger.interfaces.BaseWordService;
@@ -27,7 +30,8 @@ public class TranslationServiceImpl implements TranslationService {
 
 	
 
-	
+	private final Logger logger = LogManager.getLogger(TranslationServiceImpl.class);
+
 	private final Map<String,LevelService> levelServices = new HashMap<>();
 	private final Map<String,LanguageProcessingService> processingServices = new HashMap<>();
 
@@ -112,6 +116,8 @@ public class TranslationServiceImpl implements TranslationService {
 		LanguageProcessingService processingService2 = processingServices.get(lang[1]+"-"+lang[0]);
 
 		List<AnnotatedRecord> textes = new ArrayList<AnnotatedRecord>();
+		
+		List<Integer> error = new ArrayList<Integer>();
 		for(int i = 0;i < wrapper.size();i++)
 		{
 			AnnotatedRecord rec = new AnnotatedRecord();
@@ -121,7 +127,8 @@ public class TranslationServiceImpl implements TranslationService {
 
 			if(text1 == null || text2 == null)
 			{
-				System.err.println("Record "+i+" text1 "+text1+" text2 "+text2);
+				error.add(i);
+				//System.err.println("Record "+i+" text1 "+text1+" text2 "+text2);
 				continue;
 			}
 			CardTextCollection t1 = getRecord(levelService1,processingService1,text1);
@@ -134,10 +141,9 @@ public class TranslationServiceImpl implements TranslationService {
 		
 			textes.add(rec);
 		}
+		logger.error(error.size()+" records with one record "+error);
 		
 		mapper.writerWithDefaultPrettyPrinter().writeValue(translationFile, textes);
-		
-		
 		
 	}
 

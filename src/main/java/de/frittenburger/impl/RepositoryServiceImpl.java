@@ -2,13 +2,10 @@ package de.frittenburger.impl;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.frittenburger.interfaces.RepositoryService;
@@ -36,6 +33,7 @@ public class RepositoryServiceImpl implements RepositoryService {
 		
 		return new ObjectMapper().readValue(src, BucketInfo.class);
 	}
+	
 	@Override
 	public BucketMetadata getBucketMetadata(String bucketId) throws IOException {
 		

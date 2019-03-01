@@ -32,12 +32,10 @@ public class SrtMergeWriter {
 		
 		if(counter.size() != 2)
 		{
-			System.out.println(counter);
-			out.println("#error");
+			out.println("#error "+counter);
 		}
 		
 		if(cluster.size() > 16) {
-			System.out.println(counter);
 			out.println("#check" + cluster.size());
 		}
 		

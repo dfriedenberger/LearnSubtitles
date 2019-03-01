@@ -6,9 +6,9 @@ import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.frittenburger.controller.PageController;
 import de.frittenburger.interfaces.ComposerJob;
 import de.frittenburger.interfaces.UploadRepository;
+import de.frittenburger.srt.SrtMergerImpl;
 
 
 public class ComposerFactory {
@@ -26,7 +26,8 @@ public class ComposerFactory {
 		switch(artefact)
 		{
 		case "merge":
-			return new MergeJob(UUID.randomUUID().toString(),repository,bucketId,new UnzipServiceImpl(),new SrtMergerServiceImpl());
+			return new MergeJob(UUID.randomUUID().toString(),repository,bucketId,new UnzipServiceImpl(),
+					new SrtMergerServiceImpl(new SrtMergerImpl()));
 		case "translation":
 			return new TranslationJob(UUID.randomUUID().toString(),repository,bucketId,new TranslationServiceImpl());
 		}

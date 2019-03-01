@@ -10,18 +10,19 @@ import de.frittenburger.impl.Tokenizer;
 import de.frittenburger.model.Token;
 import de.frittenburger.model.TokenList;
 
-public class SrtMerger2  {
+public class SrtMergerImpl2 implements SrtMerger {
 
+	@Override
 	public List<SrtCluster> merge(SrtReader srtReader1, SrtReader srtReader2) {
 
 	
 		List<SrtCluster> cl1 = read(srtReader1);
 		List<SrtCluster> cl2 = read(srtReader2);
 
-		cluster(cl1);
-		cluster(cl2);
-
-		
+		//cluster(cl1);
+		//cluster(cl2);
+		compress(cl1,2500); 
+		compress(cl2,2500);
 		
 		return merge(cl1,cl2);
 	}
@@ -159,39 +160,6 @@ public class SrtMerger2  {
 		return list;
 	}
 
-	public boolean match(SrtRecord rec1, SrtRecord rec2) {
-
-		
-		Tokenizer tokenizer = new Tokenizer();
-		
-		
-		Set<String> words = new HashSet<String>();
-		int match = 0;
-		
-		for(String text1 : rec1.getText())
-		{
-			TokenList tl1 = tokenizer.tokenize(text1);
-			for(Token t : tl1)
-			{
-				if(t.getType() != 0) continue;
-				words.add(t.getText());
-			}
-		}
-		
-		Set<String> words2 = new HashSet<String>();
-		for(String text2 : rec2.getText())
-		{
-			TokenList tl2 = tokenizer.tokenize(text2);
-			for(Token t : tl2)
-			{
-				if(t.getType() != 0) continue;
-				words2.add(t.getText());
-				if(words.contains(t.getText()))
-					match++;
-			}
-		}
-		//System.out.println(words + " == "+words2);
-		return match > 0;
-	}
+	
 
 }

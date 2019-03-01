@@ -2,9 +2,7 @@ package de.frittenburger.controller;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -33,7 +31,7 @@ import static org.springframework.http.ResponseEntity.ok;
 @RequestMapping("api/v1/")
 public class BucketController implements BucketApi {
 	
-	private static final Logger logger = LogManager.getLogger(PageController.class);
+	private static final Logger logger = LogManager.getLogger(BucketController.class);
 
 	private static final UploadRepository repository = UploadRepositoryImpl.getInstance();
 	private static final RepositoryService repositoryService = new RepositoryServiceImpl(repository);

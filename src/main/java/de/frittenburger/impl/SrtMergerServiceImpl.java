@@ -23,7 +23,12 @@ public class SrtMergerServiceImpl implements SrtMergerService {
 	private LanguageDetectorService languageDetectorService = new LanguageDetectorServiceImpl();
 	
 	private final Logger logger = LogManager.getLogger(SrtMergerServiceImpl.class);
+	private final SrtMerger srtMerger;
 
+	public SrtMergerServiceImpl(SrtMerger srtMerger)
+	{
+		this.srtMerger = srtMerger;
+	}
 	@Override
 	public void merge(File[] srtFiles, File mergeFile) throws IOException {
 
@@ -60,8 +65,9 @@ public class SrtMergerServiceImpl implements SrtMergerService {
 		}
 		
 		//Merge and add to Bucket
-		SrtMerger merger = new SrtMerger();
-		List<SrtCluster> clusterList = merger.merge(srtReader[0],srtReader[1]);
+		List<SrtCluster> clusterList = srtMerger.merge(srtReader[0],srtReader[1]);
+		
+		
 		
 		SrtMergeWriter writer = new SrtMergeWriter(mergeFile);
 

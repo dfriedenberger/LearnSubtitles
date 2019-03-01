@@ -6,9 +6,7 @@ import java.io.IOException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.frittenburger.interfaces.ComposerJob;
 import de.frittenburger.interfaces.TranslationService;
-import de.frittenburger.interfaces.UnzipService;
 import de.frittenburger.interfaces.UploadRepository;
 import de.frittenburger.model.UploadBucket;
 

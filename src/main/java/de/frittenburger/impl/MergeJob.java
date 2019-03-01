@@ -2,9 +2,7 @@ package de.frittenburger.impl;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
@@ -17,7 +15,7 @@ import de.frittenburger.model.UploadBucket;
 
 public class MergeJob extends BaseJob {
 
-	private final Logger logger = LogManager.getLogger(TranslationJob.class);
+	private final Logger logger = LogManager.getLogger(MergeJob.class);
 	private final UploadRepository repository;
 	private final UnzipService unzipService;
 	private final SrtMergerService srtMergerService;

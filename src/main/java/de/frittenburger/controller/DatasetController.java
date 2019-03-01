@@ -33,7 +33,7 @@ import static org.springframework.http.ResponseEntity.ok;
 @RequestMapping("api/v1/")
 public class DatasetController implements DatasetApi {
 
-	private static final Logger logger = LogManager.getLogger(PageController.class);
+	private static final Logger logger = LogManager.getLogger(DatasetController.class);
 
 	private static final UploadRepository repository = UploadRepositoryImpl.getInstance();
 	private static final RepositoryService repositoryService = new RepositoryServiceImpl(repository);

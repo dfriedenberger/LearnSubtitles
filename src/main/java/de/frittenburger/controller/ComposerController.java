@@ -25,7 +25,7 @@ import static org.springframework.http.ResponseEntity.ok;
 public class ComposerController implements ComposerApi {
 
 	
-	private static final Logger logger = LogManager.getLogger(PageController.class);
+	private static final Logger logger = LogManager.getLogger(ComposerController.class);
 	
 	
 	

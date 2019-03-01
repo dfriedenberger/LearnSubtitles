@@ -3,7 +3,6 @@ package de.frittenburger.controller;
 
 
 import java.security.GeneralSecurityException;
-import java.util.HashMap;
 import java.util.List;
 import java.io.File;
 import java.io.IOException;

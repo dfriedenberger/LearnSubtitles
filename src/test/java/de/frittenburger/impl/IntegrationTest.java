@@ -5,13 +5,16 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.List;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
 import de.frittenburger.interfaces.SrtMergerService;
 import de.frittenburger.interfaces.TranslationService;
+import de.frittenburger.srt.SrtCluster;
+import de.frittenburger.srt.SrtMergeReader;
+import de.frittenburger.srt.SrtMergerImpl;
+import de.frittenburger.srt.SrtMergerImpl2;
 
 public class IntegrationTest {
 
@@ -19,10 +22,13 @@ public class IntegrationTest {
 
 		if(!new File("tmp").exists()) return;
 	
-		SrtMergerService mergeService = new SrtMergerServiceImpl();
+		SrtMergerService mergeService = new SrtMergerServiceImpl(new SrtMergerImpl());
+		SrtMergerService mergeService2 = new SrtMergerServiceImpl(new SrtMergerImpl2());
 		TranslationService translationService = new TranslationServiceImpl();
 
 		File mergeFile = new File("tmp/"+movie+"/merge.txt"); 
+		File mergeFile2 = new File("tmp/"+movie+"/merge2.txt"); 
+
 		File translationFile = new File("tmp/"+movie+"/translate.json"); 
 
 		File[] srtFiles = new File("tmp/"+movie).listFiles(new FilenameFilter(){
@@ -33,7 +39,16 @@ public class IntegrationTest {
 			}});
 		
 		mergeService.merge(srtFiles, mergeFile);
+		mergeService2.merge(srtFiles, mergeFile2);
+
+		List<SrtCluster> cluster = new SrtMergeReader(mergeFile).read();
+		
+		List<SrtCluster> cluster2 = new SrtMergeReader(mergeFile2).read();
+
 		translationService.translate(mergeFile,translationFile);
+		
+		
+		
 		assertTrue(mergeFile.length() > 10);
 		assertTrue(translationFile.length() > 10);
 
