@@ -14,10 +14,12 @@ basePath: "/v1"
 tags:
 - name: "dataset"
   description: "datasets for learning language"
-- name: "create"
-  description: "create datasets"
 - name: "database"
   description: "user database"
+- name: "bucket"
+  description: "manage buckets"
+- name: "composer"
+  description: "Composer engine" 
   
 schemes:
 - "https"
@@ -90,12 +92,31 @@ paths:
           schema:
             type: file
         405:
-          description: Invalid input              
-        
-  /create/upload:
+          description: Invalid input  
+          
+  /buckets:
+    get:
+      tags:
+      - "bucket"
+      summary: "get list of buckets metadata"
+      description: ""
+      operationId: "getBuckets"
+      produces:
+      - "application/json"
+      responses:
+        201:
+          description: "list of bucket"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Bucket"
+        400:
+          description: "Invalid status value"
+          
+  /buckets/{bucketId}/upload:
     post:
       tags:
-      - "create"
+      - "bucket"
       summary: "uploads an file"
       description: ""
       operationId: "uploadFile"
@@ -105,7 +126,7 @@ paths:
       - "application/json"
       parameters:
       - name: "bucketId"
-        in: "formData"
+        in: "path"
         description: "ID of bucket"
         required: true
         type: "string"
@@ -118,39 +139,15 @@ paths:
         200:
           description: "successful operation"
     
-  /create/start:
+  /buckets/{bucketId}/data:
     put:
       tags:
-      - "create"
-      summary: "Start Processing Bucket"
+      - "bucket"
+      summary: "upload metadata"
       description: ""
-      operationId: "startProcessing"
+      operationId: "uploadData"
       consumes:
       - "application/json"
-      produces:
-      - "application/json"
-      parameters:
-      - in: "body"
-        name: "bucket"
-        description: "Bucket"
-        required: true
-        schema:
-          $ref: "#/definitions/BucketCommand"
-      responses:
-        400:
-          description: "Invalid ID supplied"
-        404:
-          description: "Bucket not found"
-        405:
-          description: "Validation exception"
-          
-  /create/{bucketId}:
-    get:
-      tags:
-      - "create"
-      summary: "get current state of bucket"
-      description: ""
-      operationId: "getState"
       produces:
       - "application/json"
       parameters:
@@ -159,13 +156,90 @@ paths:
         description: "ID of bucket"
         required: true
         type: "string"
+      - in: "body"
+        name: "bucket"
+        description: "Bucket"
+        required: true
+        schema:
+          $ref: "#/definitions/BucketData"
+      responses:
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Bucket not found"
+        405:
+          description: "Validation exception"
+
+  /buckets/{bucketId}/delete/{filename}:
+    get:
+      tags:
+      - "bucket"
+      summary: "delete an file"
+      description: ""
+      operationId: "deleteFile"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "bucketId"
+        in: "path"
+        description: "ID of bucket"
+        required: true
+        type: "string"
+      - name: "filename"
+        in: "path"
+        description: "name of file"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+  
+  
+  
+  /composer:
+    get:
+      tags:
+      - "composer"
+      summary: "get list of running jobs"
+      description: ""
+      operationId: "getJobs"
+      produces:
+      - "application/json"
       responses:
         201:
-          description: "list of available datasets"
+          description: "list of bucket"
           schema:
-              $ref: "#/definitions/BucketState"
+            type: "array"
+            items:
+              $ref: "#/definitions/Job"
         400:
           description: "Invalid status value"
+          
+  /composer/{bucketId}/generate/{artefact}:
+    get:
+      tags:
+      - "composer"
+      summary: "generate artefact"
+      description: ""
+      operationId: "generate"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "bucketId"
+        in: "path"
+        description: "ID of bucket"
+        required: true
+        type: "string"
+      - name: "artefact"
+        in: "path"
+        description: "artefact"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Job"
           
   /database/{key}:
     get:
@@ -225,6 +299,19 @@ paths:
   
 
 definitions:
+  Bucket:
+    type: "object"
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      files:
+        type: array
+        items: 
+          type: string
+
+  
   BucketMetadata:
     type: "object"
     properties:
@@ -244,20 +331,28 @@ definitions:
         items:
           type: string
         
-  BucketCommand:
+  BucketData:
     type: object
     properties:
-      id:
-        type: string
       title:
         type: string
       description:
         type: string
-        
-  BucketState:
+  
+  Job:
     type: object
     properties:
       id:
         type: string
+      type:
+        type: string
+      bucketId:
+        type: string
       state:
         type: string
+      duration:
+        type: integer
+        format: int64
+
+
+        

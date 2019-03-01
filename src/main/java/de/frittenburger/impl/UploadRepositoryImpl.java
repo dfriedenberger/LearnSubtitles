@@ -1,12 +1,10 @@
 package de.frittenburger.impl;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
-import java.security.GeneralSecurityException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -20,7 +18,6 @@ import org.apache.logging.log4j.Logger;
 import de.frittenburger.interfaces.UploadRepository;
 import de.frittenburger.model.UploadBagitInfo;
 import de.frittenburger.model.UploadBucket;
-import de.frittenburger.model.UploadManifest;
 
 public class UploadRepositoryImpl implements UploadRepository {
 
@@ -85,7 +82,7 @@ public class UploadRepositoryImpl implements UploadRepository {
 	}
 
 	@Override
-	public UploadBucket readBucket(String bucketId) {
+	public UploadBucket readBucket(String bucketId) throws IOException {
 		
 		if(bucketId == null || bucketId.trim().isEmpty())
 			throw new IllegalArgumentException("bucketid");
@@ -94,7 +91,7 @@ public class UploadRepositoryImpl implements UploadRepository {
 		
 		
 		if(!buckets.containsKey(bucketId))
-			return null; //Not exists, contains no upload's
+			throw new IOException(bucketId + " not exists");
 		
 		return buckets.get(bucketId);
 
@@ -124,7 +121,6 @@ public class UploadRepositoryImpl implements UploadRepository {
 			UploadBucket bucket = new UploadBucket(bucketPath);
 			bucket.getPath().mkdir();
 			Files.write( bucket.getMetadata().getPath().toPath(), new byte[0], StandardOpenOption.CREATE_NEW);
-			Files.write( bucket.getManifest().getPath().toPath(), new byte[0], StandardOpenOption.CREATE_NEW);
 
 			bucket.getPayload().mkdir();
 			buckets.put(bucketId,bucket);
@@ -140,15 +136,7 @@ public class UploadRepositoryImpl implements UploadRepository {
 		throw new RuntimeException("buckets count limted to 100 per day");
 	}
 
-	@Override
-	public void createManifest(UploadBucket bucket, File file) throws GeneralSecurityException, IOException {
-
-		UploadManifest manifest = bucket.getManifest();
-		String cksum = getCheckSum(file,manifest.getAlgorithm());
-		String line = manifest.add(cksum,file.getName());
-		Files.write( manifest.getPath().toPath() , line.getBytes(), StandardOpenOption.APPEND);
-
-	}
+	
 	
 	@Override
 	public void createMetadata(UploadBucket bucket, String key[], String value[]) throws IOException {
@@ -168,7 +156,7 @@ public class UploadRepositoryImpl implements UploadRepository {
 	}
 	
 	@Override
-	public void createFile(UploadBucket bucket, String filename, byte[] bytes) throws GeneralSecurityException, IOException {
+	public void createFile(UploadBucket bucket, String filename, byte[] bytes) throws IOException {
 
 		if(bytes == null)
 			throw new IllegalArgumentException("bytes");
@@ -179,28 +167,33 @@ public class UploadRepositoryImpl implements UploadRepository {
 		
 		File out = new File(bucket.getPayload(),filename);
 		Files.write( out.toPath() , bytes, StandardOpenOption.CREATE_NEW);
-
-		createManifest(bucket,out);
 		
 	}
 
+	@Override
+	public void updateFile(UploadBucket bucket, String filename, byte[] bytes) throws IOException {
+
+		if(bytes == null)
+			throw new IllegalArgumentException("bytes");
+
+		//Append File
+		if(containsAny(filename,ILLEGAL_CHARACTERS))
+			throw new IllegalArgumentException("filename");
+		
+		File out = new File(bucket.getPayload(),filename);
+		
+		if(!out.exists())
+			throw new FileNotFoundException(filename);
+		Files.write( out.toPath() , bytes, StandardOpenOption.CREATE);
+		
+	}
+	
 	@Override
 	public File[] readFiles(UploadBucket bucket) {
 		return bucket.getPayload().listFiles();
 	}
 	
 	
-	private String getCheckSum(File file,String typ) throws NoSuchAlgorithmException, IOException {
-		    MessageDigest md = MessageDigest.getInstance(typ);
-		    byte[] bytes = Files.readAllBytes(file.toPath());
-		    md.update(bytes);
-		    byte[] digest = md.digest();
-		    StringBuilder sb = new StringBuilder();
-		    for (byte b : digest) {
-		        sb.append(String.format("%02X", b));
-		    }
-		    return sb.toString();
-	}
 
 
 	private static final char[] ILLEGAL_CHARACTERS = { '/', '\n', '\r', '\t', '\0', '\f', '`', '?', '*', '\\', '<', '>', '|', '\"', ':' };
@@ -218,6 +211,23 @@ public class UploadRepositoryImpl implements UploadRepository {
 	      }
 	      return false;
 	  }
+
+	@Override
+	public void deleteFile(UploadBucket bucket, String filename)
+			throws IOException {
+
+		
+		if(containsAny(filename,ILLEGAL_CHARACTERS))
+			throw new IllegalArgumentException("filename");
+		
+		File out = new File(bucket.getPayload(),filename);
+		
+		if(!out.exists())
+			throw new FileNotFoundException(filename);
+		
+		Files.delete(out.toPath());
+		
+	}
 
 	
 

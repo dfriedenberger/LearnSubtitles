@@ -2,21 +2,6 @@
 State = function(container)
 {
     this.container = container;
-    this.set = function(s)
-    {
-        switch(s)
-        {
-           case "0": //running
-            this.info("running ...");
-            break;
-          case "99": //ready
-            this.done("ready");
-            break;
-          default:
-            this.error("state ="+s);
-            break;
-        }
-    };
     this.info = function(text)
     {
         $(this.container).addClass("alert-primary");
@@ -37,38 +22,14 @@ State = function(container)
 var state = new State("#status .alert");
 
 
-processState = function(bucketId)
-{
-
-    setTimeout(function(){
-        $.ajax({
-            type: "GET",
-            url: '/api/v1/create/'+bucketId,
-            cache: false,
-            success: function(data)
-            {
-                console.log(data);
-                state.set(data.state);
-                if(data.state == 0)
-                    processState(bucketId);
-            },
-            error: function (xhr, ajaxOptions, thrownError) {
-                state.error("Server response "+xhr.status);
-            }
-        })
-    },1000);
-
-}
 
 processStart = function(bucketId)
 {
     state.info("Start");
 
     var form = $("#metadata");
-    console.log(form.serialize());
 
     var bucketCommand = {
-        id : form.find('input[name="id"]').val(),
         title : form.find('input[name="title"]').val(),
         description : form.find('textarea[name="description"]').val()
     };
@@ -81,8 +42,7 @@ processStart = function(bucketId)
             success: function(data)
             {
                 console.log(data);
-                //weiter
-                processState(bucketId);
+                state.done("Ok")
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 state.error("Server response "+xhr.status);
@@ -98,10 +58,27 @@ $( document ).ready(function() {
     $("#process").find("a").click(function(ev) {
         ev.preventDefault();    
         var bucket = $(this).data("bucket");
-        console.log("process "+bucket);
-        $(this).prop("disabled",true);
+        console.log("send form of ",bucket);
         processStart(bucket);
       
     });
 
+    $("#files").find("a").click(function(ev) {
+        ev.preventDefault();    
+        var href = $(this).attr("href");
+        var row = $(this).closest("tr");
+        console.log("call",href,row);
+        $.ajax({
+            type: "GET",
+            url: href,
+            cache: false,
+            success: function(data)
+            {
+                $(row).slideUp("normal", function() { $(this).remove(); } );
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log("Server response "+xhr.status);
+            }
+        });
+    });
 });

@@ -1,0 +1,100 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<title>subtítulo</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	 
+	    <div th:replace="fragments/header :: header-js-css-core"/>
+	          	
+	    <script src="/js/cycle.class.js"></script>
+	    <script src="/js/modul-list.js"></script>
+	   
+        
+    </head>
+    <body>
+    
+    
+    
+     <header th:replace="fragments/header :: header-fixed-header"/>
+    
+     <script id="row-template" type="text/x-handlebars-template">
+       <tr>
+                      <td><input type="checkbox" class="checkbox" data-id="{{id}}"></td>
+				      <td>{{name}}</td>
+				      
+				      <td>
+				             <span data-toggle="collapse" data-target="#details-{{id}}" class="clickable">
+				             <i class="fa fa-database" style="color: {{state.data}}"> {{state.srt}}</i>
+				             <i class="fa fa-archive" style="color: {{state.archive}}"> {{state.zip}}</i>
+				             <i class="fa fa-info-circle" style="color: {{state.info}}"></i>
+				             <i class="fa fa-image" style="color: {{state.image}}"></i>
+				             <i class="fa fa-file" style="color: {{state.merge}}"></i>
+				             <i class="fa fa-file" style="color: {{state.translation}}"></i>
+				             <span style="color: red">{{state.error}}</span>
+				             </span>
+				             <span id="details-{{id}}" class="collapse"><br />{{{files}}}</span>
+				      </td>
+				      <td>
+				            <button id="btngrp-{{id}}" type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						      <i class="fa fa-ellipsis-h"></i>
+						    </button>
+						    <div class="dropdown-menu" aria-labelledby="btngrp-{{id}}">
+						      <a class="dropdown-item" href="/edit/{{id}}"><i class="fa fa-edit"></i> Edit Bucket</a>
+						      <a class="dropdown-item" href="/editfile/{{id}}"><i class="fa fa-edit"></i> Edit Mergefile</a>
+						      <a class="dropdown-item generate-item" data-command="gen-merge" href="/api/v1/composer/{{id}}/generate/merge"><i class="fa fa-cogs"></i> Generate Merge</a>
+						      <a class="dropdown-item generate-item" data-command="gen-translation" href="/api/v1/composer/{{id}}/generate/translation"><i class="fa fa-cogs"></i> Generate Translation</a>
+						      
+						    </div>
+				      
+				      </td>
+	    </tr>
+	   
+    </script>
+    
+   <main role="main">
+  		<div class="container">     
+          
+			        <div class="table-responsive-md">
+			        
+			           <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+						   <div class="btn-group mr-2" role="group">
+						    <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						      Generate
+						    </button>
+						    <div id="generate-group" class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+						      <a class="dropdown-item" data-command="gen-merge" href="#">Merge</a>
+						      <a class="dropdown-item" data-command="gen-translation" href="#">Translation</a>
+						    </div>
+						  </div>
+						 
+						  <div class="btn-group mr-2" role="group" aria-label="Third group">
+						    <a class="btn btn-primary" href="/create">Create</a>
+						  </div>
+						</div>
+
+						<table class="table table-striped">
+						  <thead>
+						    <tr>
+						      <th style="width: 5%" scope="col"><input type="checkbox" id="checkbox-all"></th>
+						      <th style="width: 25%" scope="col">Title</th>
+						      <th style="width: 50%" scope="col">Files</th>
+						      <th style="width: 15%" scope="col">Action</th>
+						    </tr>
+						  </thead>
+						  <tbody id="rows">
+						  
+						   
+						  </tbody>
+						</table>	
+				   </div>	
+		</div>
+	</main>
+	
+	<footer th:replace="fragments/header :: header-fixed-footer"/>
+
+	
+  
+	
+    </body>
+
+</html>

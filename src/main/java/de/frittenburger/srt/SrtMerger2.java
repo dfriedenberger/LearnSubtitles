@@ -1,8 +1,14 @@
 package de.frittenburger.srt;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
+
+import de.frittenburger.impl.Tokenizer;
+import de.frittenburger.model.Token;
+import de.frittenburger.model.TokenList;
 
 public class SrtMerger2  {
 
@@ -98,8 +104,7 @@ public class SrtMerger2  {
 				SrtCluster cl0 = in.get(i-1);
 				SrtCluster cl1 = in.get(i);
 				
-				if(cl0.size() > 2) continue;
-				if(cl1.size() > 2) continue;
+				if(cl0.size() + cl1.size() > 3) continue;
 				
 				long dist = cl1.getFirst().getFrom() - cl0.getLast().getTo();
 				if(ix != -1 && (dist > mindist)) continue;
@@ -117,6 +122,25 @@ public class SrtMerger2  {
 		}
 		
 	}
+	public void compress(List<SrtCluster> in,long maxdiff) {
+		
+			int i = 1;
+			while(i < in.size())
+			{
+				SrtCluster cl0 = in.get(i-1);
+				SrtCluster cl1 = in.get(i);
+			
+				long dist = cl1.getFirst().getFrom() - cl0.getLast().getTo();
+				if(dist <= maxdiff)
+				{
+					//join
+					in.get(i -1).addAll(in.remove(i));
+					continue;	
+				}
+				i++;
+			}
+
+	}
 
 	public List<SrtCluster> read(SrtReader srtReader) {
 		
@@ -133,6 +157,41 @@ public class SrtMerger2  {
 			list.add(cl);
 		}
 		return list;
+	}
+
+	public boolean match(SrtRecord rec1, SrtRecord rec2) {
+
+		
+		Tokenizer tokenizer = new Tokenizer();
+		
+		
+		Set<String> words = new HashSet<String>();
+		int match = 0;
+		
+		for(String text1 : rec1.getText())
+		{
+			TokenList tl1 = tokenizer.tokenize(text1);
+			for(Token t : tl1)
+			{
+				if(t.getType() != 0) continue;
+				words.add(t.getText());
+			}
+		}
+		
+		Set<String> words2 = new HashSet<String>();
+		for(String text2 : rec2.getText())
+		{
+			TokenList tl2 = tokenizer.tokenize(text2);
+			for(Token t : tl2)
+			{
+				if(t.getType() != 0) continue;
+				words2.add(t.getText());
+				if(words.contains(t.getText()))
+					match++;
+			}
+		}
+		//System.out.println(words + " == "+words2);
+		return match > 0;
 	}
 
 }

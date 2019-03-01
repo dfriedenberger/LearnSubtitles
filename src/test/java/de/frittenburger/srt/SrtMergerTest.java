@@ -69,7 +69,7 @@ public class SrtMergerTest {
 	}
 
 	@Test
-	public void testCluster() throws IOException {
+	public void testCompress() throws IOException {
 		
 		ClassLoader classLoader = getClass().getClassLoader();
 		
@@ -90,7 +90,56 @@ public class SrtMergerTest {
 		List<SrtCluster> clusterList1 = merger.read(srtReader1);
 		List<SrtCluster> clusterList2 = merger.read(srtReader2);
 
-		merger.cluster(clusterList1);
+		merger.compress(clusterList1,2500); //Spanisch
+		merger.compress(clusterList2,2500);
+
+		
+		for(SrtCluster cl : clusterList1)
+		{
+			System.out.println("Size "+cl.size());
+			for(int i = 0;i < cl.size();i++)
+				System.out.println(cl.get(i));
+
+		}
+		System.out.println("----------------------------");
+
+		for(SrtCluster cl : clusterList2)
+		{
+			System.out.println("Size "+cl.size());
+			for(int i = 0;i < cl.size();i++)
+				System.out.println(cl.get(i));
+
+		}
+		assertEquals(2 + 1/* Werbung */, clusterList1.size());
+		assertEquals(2, clusterList2.size());
+
+	}
+	
+	
+	
+	@Test
+	public void testCluster() throws IOException {
+		
+		ClassLoader classLoader = getClass().getClassLoader();
+		
+		File file1 = new File(classLoader.getResource("srt/subpart.es.utf8.srt").getFile());
+		File file2 = new File(classLoader.getResource("srt/subpart.de.utf8.srt").getFile());
+
+		
+		SrtReader srtReader1 = new SrtReader();
+		srtReader1.load("es",file1.getPath(),new DefaultFilter(),"UTF8");
+		
+		SrtReader srtReader2 = new SrtReader();
+		srtReader2.load("de",file2.getPath(),new DefaultFilter(),"UTF8");
+		
+
+		
+		SrtMerger2 merger = new SrtMerger2();
+		
+		List<SrtCluster> clusterList1 = merger.read(srtReader1);
+		List<SrtCluster> clusterList2 = merger.read(srtReader2);
+
+		merger.cluster(clusterList1); 
 		merger.cluster(clusterList2);
 
 		
@@ -101,6 +150,8 @@ public class SrtMergerTest {
 				System.out.println(cl.get(i));
 
 		}
+		System.out.println("----------------------------");
+
 		for(SrtCluster cl : clusterList2)
 		{
 			System.out.println("Size "+cl.size());
@@ -108,8 +159,108 @@ public class SrtMergerTest {
 				System.out.println(cl.get(i));
 
 		}
-		assertEquals(clusterList1.size(), clusterList2.size());
+		assertEquals(clusterList1.size(),clusterList2.size());
+
 	}
 	
+	
+	@Test
+	public void testMatchingTest() throws IOException {
+		
+		ClassLoader classLoader = getClass().getClassLoader();
+		
+		File file1 = new File(classLoader.getResource("srt/part.es.utf8.srt").getFile());
+		File file2 = new File(classLoader.getResource("srt/part.de.utf8.srt").getFile());
+
+		
+		SrtReader srtReader1 = new SrtReader();
+		srtReader1.load("es",file1.getPath(),new DefaultFilter(),"UTF8");
+		
+		SrtReader srtReader2 = new SrtReader();
+		srtReader2.load("de",file2.getPath(),new DefaultFilter(),"UTF8");
+		
+		SrtMerger2 merger = new SrtMerger2();
+
+		assertTrue(merger.match(srtReader1.get(1),srtReader2.get(0)));
+
+		int i = 0;
+		while(true)
+		{
+			SrtRecord rec1 = srtReader1.get(i++);
+			if(rec1 == null) break;
+			
+		    int j = 0;
+		    while(true)
+			{
+				SrtRecord rec2 = srtReader2.get(j++);
+				if(rec2 == null) break;
+				
+				long t1 = rec1.getTo() - rec1.getFrom();
+				long t2 = rec2.getTo() - rec2.getFrom();
+				long diff = t1 - t2;
+				//if(diff > 5000) continue;
+			
+				if(merger.match(rec1,rec2))
+				{
+
+					System.out.println(i +" == "+j+" diff="+diff);
+					System.out.println(rec1 +" == "+rec2);
+
+				}
+			}
+		}
+		
+		assertTrue(merger.match(srtReader1.get(1),srtReader2.get(0)));
+		assertFalse(merger.match(srtReader1.get(4),srtReader2.get(4)));		
+	}
+	
+	@Test
+	public void testDumpDifference() throws IOException {
+		
+		ClassLoader classLoader = getClass().getClassLoader();
+		
+		
+		File file1 = new File(classLoader.getResource("srt/part.es.utf8.srt").getFile());
+		File file2 = new File(classLoader.getResource("srt/part.de.utf8.srt").getFile());
+
+		
+		SrtReader srtReader1 = new SrtReader();
+		srtReader1.load("es",file1.getPath(),new DefaultFilter(),"UTF8");
+		
+		SrtReader srtReader2 = new SrtReader();
+		srtReader2.load("de",file2.getPath(),new DefaultFilter(),"UTF8");
+		
+		int i = 0;
+		while(true)
+		{
+			SrtRecord rec1 = srtReader1.get(i);
+			if(rec1 == null) break;
+			if(i > 0)
+			{
+				SrtRecord rec0 = srtReader1.get(i-1);
+				System.out.println(rec1.getFrom() - rec0.getTo());
+			}
+			System.out.println(rec1.getText());
+			
+		    i++;
+		}
+		
+		System.out.println("----------------------------");
+
+		 i = 0;
+		while(true)
+		{
+			SrtRecord rec1 = srtReader2.get(i);
+			if(rec1 == null) break;
+			if(i > 0)
+			{
+				SrtRecord rec0 = srtReader2.get(i-1);
+				System.out.println(rec1.getFrom() - rec0.getTo());
+			}
+			System.out.println(rec1.getText());
+			
+		    i++;
+		}
+	}
 	
 }

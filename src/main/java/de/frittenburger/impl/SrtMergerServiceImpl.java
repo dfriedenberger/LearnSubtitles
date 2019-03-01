@@ -22,7 +22,7 @@ public class SrtMergerServiceImpl implements SrtMergerService {
 	private EncodingDetectorService encodingDetectorService = new EncodingDetectorServiceImpl();
 	private LanguageDetectorService languageDetectorService = new LanguageDetectorServiceImpl();
 	
-	private final Logger logger = LogManager.getLogger(ComposerServiceImpl.class);
+	private final Logger logger = LogManager.getLogger(SrtMergerServiceImpl.class);
 
 	@Override
 	public void merge(File[] srtFiles, File mergeFile) throws IOException {

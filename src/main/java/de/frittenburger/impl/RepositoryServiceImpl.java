@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.frittenburger.interfaces.RepositoryService;
 import de.frittenburger.interfaces.UploadRepository;
+import de.frittenburger.model.BucketInfo;
 import de.frittenburger.model.BucketMetadata;
 import de.frittenburger.model.UploadBucket;
 import de.frittenburger.srt.SrtCluster;
@@ -28,18 +29,26 @@ public class RepositoryServiceImpl implements RepositoryService {
 	}
 
 	@Override
+	public BucketInfo getBucketInfo(String bucketId) throws IOException {
+		
+		UploadBucket bucket = repository.readBucket(bucketId);
+		byte src[] = repository.readFile(bucket, "info.json");
+		
+		return new ObjectMapper().readValue(src, BucketInfo.class);
+	}
+	@Override
 	public BucketMetadata getBucketMetadata(String bucketId) throws IOException {
 		
 		UploadBucket bucket = repository.readBucket(bucketId);
 		byte src[] = repository.readFile(bucket, "info.json");
 		
-		Map<String,String> map = new ObjectMapper().readValue(src, new TypeReference<HashMap<String,String>>() {});
+		BucketInfo info = new ObjectMapper().readValue(src, BucketInfo.class);
 		
 		BucketMetadata md = new BucketMetadata();
 		md.setId(bucketId);
-		md.setTitle(map.get("title"));
+		md.setTitle(info.getTitle());
 		
-		String desc = map.get("description");
+		String desc = info.getDescription();
 		if(desc.length() > 140) 
 		{
 			int i = desc.lastIndexOf(" ", 140);
@@ -76,6 +85,8 @@ public class RepositoryServiceImpl implements RepositoryService {
 		
 		return md;
 	}
+
+	
 
 
 
