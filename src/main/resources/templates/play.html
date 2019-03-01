@@ -83,7 +83,7 @@
 		    var database = new Database(syncdb);
 		    
 		    $.when( 
-		    	database.sync(bucketId)
+		    	database.synchronize(bucketId)
  				/* , d2  */
  			).done(function () {
 		    	console.log("sync complete");
