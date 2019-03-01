@@ -87,22 +87,17 @@
  				/* , d2  */
  			).done(function () {
 		    	console.log("sync complete");
-		    });
 		    
-		    var cardManager = new CardManager(database,language0,language1,bucketId);
-		    
-		    
-		    
-		    
-		    
-			$.ajax({
-	           url: "/api/v1/dataset/" + bucketId+"/translation_gen.json",
-	           context : this,
-	    	}).then(function(dataset) {
-			      cardManager.setDataset(dataset);
-			      cardManager.build();
-			});
-		    
+			    var cardManager = new CardManager(database,language0,language1,bucketId);
+			    
+				$.ajax({
+		           url: "/api/v1/dataset/" + bucketId+"/translation_gen.json",
+		           context : this,
+		    	}).then(function(dataset) {
+				      cardManager.setDataset(dataset);
+				      cardManager.build();
+				});
+		      });
 		});
 	</script>
 	

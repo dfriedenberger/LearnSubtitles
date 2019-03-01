@@ -56,9 +56,10 @@ CardManager = function(database,language0,language1,bucketId)
         $('.play-command-next').hide(0);
         $('.play-command-show').show(0);
 
-        var percent = parseInt(100 * this.ix  / this.dataset.length);
+        var i = parseInt(this.ix);
+        var percent = parseInt(100 *  i / this.dataset.length);
 
-        $('.statistic').text( (this.ix +1) +"/"+this.dataset.length+" ("+percent+"%)");
+        $('.statistic').text( (i + 1 ) +"/"+this.dataset.length+" ("+percent+"%)");
 
 
         var l1 = list[manager.language0];
