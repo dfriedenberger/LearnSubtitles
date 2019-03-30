@@ -77,6 +77,7 @@ public class DatasetController implements DatasetApi {
 
 			SrtMergeReader reader = new SrtMergeReader(text);
 			
+			//TODO Deprecated ???
 			List<SrtCluster> clusters = reader.read();
 	
 			byte[] data = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsBytes(clusters);

@@ -10,7 +10,7 @@ import java.util.List;
 import org.junit.Test;
 
 import de.frittenburger.interfaces.SrtMergerService;
-import de.frittenburger.interfaces.TranslationService;
+import de.frittenburger.interfaces.GameService;
 import de.frittenburger.srt.SrtCluster;
 import de.frittenburger.srt.SrtMergeReader;
 import de.frittenburger.srt.SrtMergerImpl;
@@ -24,12 +24,10 @@ public class IntegrationTest {
 	
 		SrtMergerService mergeService = new SrtMergerServiceImpl(new SrtMergerImpl());
 		SrtMergerService mergeService2 = new SrtMergerServiceImpl(new SrtMergerImpl2());
-		TranslationService translationService = new TranslationServiceImpl();
 
 		File mergeFile = new File("tmp/"+movie+"/merge.txt"); 
 		File mergeFile2 = new File("tmp/"+movie+"/merge2.txt"); 
 
-		File translationFile = new File("tmp/"+movie+"/translate.json"); 
 
 		File[] srtFiles = new File("tmp/"+movie).listFiles(new FilenameFilter(){
 
@@ -38,6 +36,9 @@ public class IntegrationTest {
 				return name.toLowerCase().endsWith(".srt");
 			}});
 		
+		
+		
+		
 		mergeService.merge(srtFiles, mergeFile);
 		mergeService2.merge(srtFiles, mergeFile2);
 
@@ -45,12 +46,20 @@ public class IntegrationTest {
 		
 		List<SrtCluster> cluster2 = new SrtMergeReader(mergeFile2).read();
 
-		translationService.translate(mergeFile,translationFile);
+		//Create Cards
+		GameService cardGameService = new CardGameService();
+		File cardsFile = new File("tmp/"+movie+"/cards.json"); 
+		cardGameService.generateDataSet(mergeFile,cardsFile);
 		
-		
+		//Create Vocabulary
+		GameService vocabularyGameService = new VocabularyGameService();
+		File vocabularyFile = new File("tmp/"+movie+"/vocabulary.json"); 
+
+		vocabularyGameService.generateDataSet(mergeFile,vocabularyFile);
 		
 		assertTrue(mergeFile.length() > 10);
-		assertTrue(translationFile.length() > 10);
+		assertTrue(cardsFile.length() > 10);
+		assertTrue(vocabularyFile.length() > 10);
 
 	}
 	

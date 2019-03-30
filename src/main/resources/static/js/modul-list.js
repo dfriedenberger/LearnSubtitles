@@ -143,7 +143,7 @@ $( document ).ready(function() {
                         state.merge = "green";
                         continue;
                     }
-                    if(filename === ("translation_gen.json")) 
+                    if(filename === ("cards_gen.json")) 
                     {
                         state.translation = "green";
                         continue;

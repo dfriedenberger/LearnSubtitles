@@ -91,7 +91,7 @@
 			    var cardManager = new CardManager(database,language0,language1,bucketId);
 			    
 				$.ajax({
-		           url: "/api/v1/dataset/" + bucketId+"/translation_gen.json",
+		           url: "/api/v1/dataset/" + bucketId+"/cards_gen.json",
 		           context : this,
 		    	}).then(function(dataset) {
 				      cardManager.setDataset(dataset);

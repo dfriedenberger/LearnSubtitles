@@ -3,9 +3,7 @@ package de.frittenburger.srt;
 import static org.junit.Assert.*;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
 
@@ -13,13 +11,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import de.frittenburger.impl.SrtMergerServiceImpl;
-import de.frittenburger.interfaces.SrtMergerService;
-import de.frittenburger.interfaces.TranslationService;
 import de.frittenburger.srt.SrtCluster;
-import de.frittenburger.srt.SrtMergeReader;
-import de.frittenburger.srt.SrtMergeReaderWrapper;
-import de.frittenburger.srt.SrtMergerImpl;
 
 public class SrtMergerTest {
 
@@ -46,20 +38,12 @@ public class SrtMergerTest {
 		
 		
 		
-		int error = 0;
 		for(SrtCluster cl : clusterList)
 		{
 			Map<String, Integer> l = cl.getCounter();
 			System.out.println(l);
-			if(l.size() != 2)
-				error++;
-			
 			System.out.println("Size "+cl.size());
-			
-			if(cl.size() >= 16)
-				error++;
 		
-			
 			for(int i = 0;i < cl.size();i++)
 				System.out.println(cl.get(i));
 

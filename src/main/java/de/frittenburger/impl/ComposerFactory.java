@@ -29,7 +29,7 @@ public class ComposerFactory {
 			return new MergeJob(UUID.randomUUID().toString(),repository,bucketId,new UnzipServiceImpl(),
 					new SrtMergerServiceImpl(new SrtMergerImpl()));
 		case "translation":
-			return new TranslationJob(UUID.randomUUID().toString(),repository,bucketId,new TranslationServiceImpl());
+			return new GameJob(UUID.randomUUID().toString(),repository,bucketId,new CardGameService());
 		}
 		
 		throw new IOException("unknown artefact: "+artefact);

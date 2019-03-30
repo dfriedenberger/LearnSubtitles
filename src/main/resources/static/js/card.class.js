@@ -8,7 +8,63 @@ jQuery.fn.highlight = function (str, text) {
         });
     });
 };
-   
+
+
+CardText = function(token)
+{
+    this.token = token;
+    this.annotation = undefined;
+    this.setAnnotation = function(annotation)
+    {
+        this.annotation = annotation;
+    }
+    this._needSpace = function(c)
+    {
+        switch(c)
+        {
+            case ".":
+            case "!":
+            case "?":
+            case ",":
+                return false;
+            default:
+                return true;
+        }
+
+
+
+    }
+    this.toHtml = function()
+    {
+        var text = "";
+        if(this.annotation)
+        {
+            text += '<span class="highlight" data-title="'+this.annotation+'">';
+        }
+        for(var i = 0;i < this.token.length;i++)
+        {
+          var t = this.token[i];
+
+          if(this._needSpace(t))
+          {
+            if(i == 0)
+              text = " "+text;
+            else
+                text += " ";
+          }
+          
+          
+
+          text += t;
+        }
+        if(this.annotation)
+        {
+            text += '</span>';
+        }
+        return text;
+    }
+}
+
 CardManager = function(database,language0,language1,bucketId)
 {
     this.dataset = [];
@@ -48,7 +104,9 @@ CardManager = function(database,language0,language1,bucketId)
     {
         var manager = this;
 
-        var list = this.dataset[this.ix];
+        var list = this.dataset.cardSets[this.ix];
+
+        console.log(list);
 
         //cleanup
         $('.tr-box').empty();
@@ -57,41 +115,28 @@ CardManager = function(database,language0,language1,bucketId)
         $('.play-command-show').show(0);
 
         var i = parseInt(this.ix);
-        var percent = parseInt(100 *  i / this.dataset.length);
+        var percent = parseInt(100 *  i / this.dataset.cardSets.length);
 
-        $('.statistic').text( (i + 1 ) +"/"+this.dataset.length+" ("+percent+"%)");
+        $('.statistic').text( (i + 1 ) +"/"+this.dataset.cardSets.length+" ("+percent+"%)");
 
 
-        var l1 = list[manager.language0];
+        var l1 = list.cards[manager.language0];
         console.log(l1);
 
 
         var html1 = "";
-        $(l1.textToken).each(function(w,word) {
+        $(l1.textParts).each(function(w,word) {
+
+            console.log(word);
+            var text = new CardText(word.token);
+            console.log(text.toHtml());
 
             if(word.annotationId)
             {
-                var annotation = l1.textAnnotation[word.annotationId];
-                console.log(annotation);
-
-
-                var htmlInfo = "";
-                $(annotation.info).each(function(i, info) {
-                    htmlInfo += info + '<br />';
-                    if(i == 0)
-                        htmlInfo += '---------<br />';
-                });
-
-                if(annotation.level > 8)
-                {
-
-                    html1 += '<span class="highlight" data-title="'+htmlInfo+'">' + word.data + '</span>';
-                    return;
-                }
+                var annotation = l1.annotations[word.annotationId];                
+                text.setAnnotation(annotation);
             }
-           
-            html1 += word.data;
-            
+            html1 += text.toHtml();
         });
         $('.tx-box').append("<p>" + html1 + "</p>");
 
@@ -110,13 +155,13 @@ CardManager = function(database,language0,language1,bucketId)
         });
 
 
-        var l2 = list[manager.language1];
-        console.log(l2.textToken);
+        var l2 = list.cards[manager.language1];
+        console.log(l2.textParts);
 
 
         var html2 = "";
-        $(l2.textToken).each(function(w,word) {
-            html2 += word.data;
+        $(l2.textParts).each(function(w,word) {
+            html2 += new CardText(word.token).toHtml();
         });
         $('.tr-box').append("<p>" + html2 + "</p>");      
         $('.tr-box').find("p").hide(0);

@@ -1,14 +1,9 @@
 package de.frittenburger.srt;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
-import de.frittenburger.impl.Tokenizer;
-import de.frittenburger.model.Token;
-import de.frittenburger.model.TokenList;
 
 public class SrtMergerImpl2 implements SrtMerger {
 
