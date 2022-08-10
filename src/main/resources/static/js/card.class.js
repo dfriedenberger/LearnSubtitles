@@ -10,62 +10,11 @@ jQuery.fn.highlight = function (str, text) {
 };
 
 
-CardText = function(token)
-{
-    this.token = token;
-    this.annotation = undefined;
-    this.setAnnotation = function(annotation)
-    {
-        this.annotation = annotation;
-    }
-    this._needSpace = function(c)
-    {
-        switch(c)
-        {
-            case ".":
-            case "!":
-            case "?":
-            case ",":
-                return false;
-            default:
-                return true;
-        }
 
+   
+      
 
-
-    }
-    this.toHtml = function()
-    {
-        var text = "";
-        if(this.annotation)
-        {
-            text += '<span class="highlight" data-title="'+this.annotation+'">';
-        }
-        for(var i = 0;i < this.token.length;i++)
-        {
-          var t = this.token[i];
-
-          if(this._needSpace(t))
-          {
-            if(i == 0)
-              text = " "+text;
-            else
-                text += " ";
-          }
-          
-          
-
-          text += t;
-        }
-        if(this.annotation)
-        {
-            text += '</span>';
-        }
-        return text;
-    }
-}
-
-CardManager = function(database,language0,language1,bucketId)
+CardManager = function(database,messages,language0,language1,bucketId, resetCallback)
 {
     this.dataset = [];
     this.ix = 0;
@@ -73,8 +22,9 @@ CardManager = function(database,language0,language1,bucketId)
     this.language1 = language1;
     this.bucketId = bucketId;
     this.database = database;
+    this.messages = messages;
+    this.resetCallback = resetCallback;
 
-    $('.play-command-next').hide(0);
 
     //init
     var data = this.database.read(this.bucketId);
@@ -84,7 +34,6 @@ CardManager = function(database,language0,language1,bucketId)
         this.ix = data.ix;
         this.language0 = data.language0;
         this.language1 = data.language1;
-
     }
    
     this.setDataset = function(dataset)
@@ -104,41 +53,53 @@ CardManager = function(database,language0,language1,bucketId)
     {
         var manager = this;
 
-        var list = this.dataset.cardSets[this.ix];
+        var card = this.dataset[this.ix];
 
-        console.log(list);
+        console.log(card);
 
         //cleanup
         $('.tr-box').empty();
         $('.tx-box').empty();
-        $('.play-command-next').hide(0);
-        $('.play-command-show').show(0);
+        manager.resetCallback();
+
 
         var i = parseInt(this.ix);
-        var percent = parseInt(100 *  i / this.dataset.cardSets.length);
+        var percent = parseInt(100 *  i / this.dataset.length);
 
-        $('.statistic').text( (i + 1 ) +"/"+this.dataset.cardSets.length+" ("+percent+"%)");
-
-
-        var l1 = list.cards[manager.language0];
-        console.log(l1);
+        $('.statistic').text( (i + 1 ) +"/"+this.dataset.length);
 
 
-        var html1 = "";
-        $(l1.textParts).each(function(w,word) {
+        console.log(card.text);
+        var html = card.text;
 
-            console.log(word);
-            var text = new CardText(word.token);
-            console.log(text.toHtml());
+        var ix = 0;
+        console.log(card.annotations);
+        for(var i = 0;i < card.annotations.length;i++)
+        {
+            console.log(card.annotations[i]);
+            if(card.annotations[i].level < 9) continue;
+            var key = card.annotations[i].key;
 
-            if(word.annotationId)
+            var s = html.indexOf(key,ix);
+            console.log(key + " found on pos "+s+" in "+html);
+            if(s < 0) continue; // not found, fehler
+            var e = s + key.length;
+            //Todo check if correct word was found 
+            //if((n == 0 ||  word[n] == ' ')) && (n + word.length)
+            
+            if(messages.exists(key))
             {
-                var annotation = l1.annotations[word.annotationId];                
-                text.setAnnotation(annotation);
+                var tag = '<span class="highlight" data-title="'+messages.get(key)+'">' + key + '</span>';
+                html = html.substring(0,s) +  tag + html.substring(e);
+                ix = s + tag.length;
             }
-            html1 += text.toHtml();
-        });
-        $('.tx-box').append("<p>" + html1 + "</p>");
+            else
+            {
+              ix = s + 1; //next
+            }
+        }
+
+        $('.tx-box').append("<p>" + html + "</p>");
 
 
         $('.highlight').each(function(k,val) {
@@ -154,18 +115,8 @@ CardManager = function(database,language0,language1,bucketId)
 
         });
 
-
-        var l2 = list.cards[manager.language1];
-        console.log(l2.textParts);
-
-
-        var html2 = "";
-        $(l2.textParts).each(function(w,word) {
-            html2 += new CardText(word.token).toHtml();
-        });
-        $('.tr-box').append("<p>" + html2 + "</p>");      
-        $('.tr-box').find("p").hide(0);
-
+        $('.tr-box').append("<p>" + card.translation + "</p>");      
+        
     }
     this._toFlag = function(lang) {
         switch(lang)
@@ -201,19 +152,19 @@ CardManager = function(database,language0,language1,bucketId)
     {
  	    var manager = this;
             
-		$('.play-command-show').click(function(ev){
-            ev.preventDefault();
-
-            $('.tr-box').find("p").fadeIn(500);
-            $('.play-command-show').hide(0);
-            $('.play-command-next').show(0);
-
-        });
         
         $('.play-command-next').click(function(ev){
             ev.preventDefault();
 
             manager.ix++;
+            manager._saveState();
+            manager._showCard();
+
+        });
+        $('.play-command-back').click(function(ev){
+            ev.preventDefault();
+
+            manager.ix--;
             manager._saveState();
             manager._showCard();
 

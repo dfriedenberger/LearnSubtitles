@@ -8,6 +8,8 @@
 	   
 	   	<script src="/js/NoSleep.min.js"></script>
 	   
+	   	<script src="/js/messages.class.js"></script>
+	   
 	   	<script src="/js/database.class.js"></script>
 	    <script src="/js/card.class.js"></script>
 	    <script src="/js/modul-play.js"></script>
@@ -41,6 +43,7 @@
 									<button type="button" class="btn btn-lg btn-success play-command play-command-show" th:text="#{play.show}"></button>
 				              </div>
 				            <div class="my-card-footer">
+				                <span class="play-command-back">Back</span>
 				                <span class="statistic"></span>
 				                <div class="change-language">
 									<img src="/css/blank.gif" class="flag">
@@ -75,6 +78,8 @@
 		    var language0 = '[[${language0}]]';
 		    var language1 = '[[${language1}]]';
 		
+		
+		
 			if(language0 == nativeLanguage)
 		    {
 		        language0 = language1;
@@ -82,16 +87,18 @@
 		    }
 		    var database = new Database(syncdb);
 		    
+		    var messages = new Messages("/api/v1/dataset/" + bucketId+"/context."+language0+"."+language1+".po");
+		    
 		    $.when( 
-		    	database.synchronize(bucketId)
- 				/* , d2  */
+		    	database.synchronize(bucketId),
+		    	messages.load()
  			).done(function () {
 		    	console.log("sync complete");
 		    
-			    var cardManager = new CardManager(database,language0,language1,bucketId);
+			    var cardManager = new CardManager(database,messages,language0,language1,bucketId);
 			    
 				$.ajax({
-		           url: "/api/v1/dataset/" + bucketId+"/cards_gen.json",
+		           url: "/api/v1/dataset/" + bucketId+"/context."+language0+".json",
 		           context : this,
 		    	}).then(function(dataset) {
 				      cardManager.setDataset(dataset);

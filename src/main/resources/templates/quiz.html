@@ -1,0 +1,117 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<title>subtítulo</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	 
+	    <div th:replace="fragments/header :: header-js-css-core"/>
+	   
+	   	<script src="/js/NoSleep.min.js"></script>
+	   
+	   	<script src="/js/database.class.js"></script>
+	    <script src="/js/vocabulary.class.js"></script>
+	    <script src="/js/modul-play.js"></script>
+	           
+	    
+	    <link rel="stylesheet" href="/css/quizPanel.css">
+       
+        
+    </head>
+    <body>
+    
+    
+    
+    <header th:replace="fragments/header :: header-fixed-play-header"/>
+    
+    <script id="quiz-title" type="text/x-handlebars-template">
+		<h3>{{text}} </h3>
+	</script>
+
+	<script id="quiz-lable" type="text/x-handlebars-template">
+		<label class="element-animation{{index}} btn btn-lg btn-primary btn-block" data-index="{{index}}" data-correct="{{correct}}">
+			<span class="btn-label"><i class="fa fa-chevron-right"/></span>
+			<input type="radio" style="visibility: hidden;" name="q_answer">{{answer}}
+		</label>
+	</script>
+	
+	<script id="quiz-result-correct" type="text/x-handlebars-template">
+		<div class="alert alert-success" role="alert">
+		  <h4 class="alert-heading">Super!</h4>
+		</div>
+	</script>
+
+    <script id="quiz-result-false" type="text/x-handlebars-template">
+		<div class="alert alert-success" role="alert">
+		  <h4 class="alert-heading">Leider falsch</h4>
+		  <p>Das war nicht ganz richtig</p>
+		  <hr>
+		  <p>Probier es nocheinmal</p>
+		</div>
+	</script>
+    
+   
+   <main role="main">
+  		<div class="container">     
+          
+			<div class="row justify-content-center">
+		      <div id="question" class="col-12"></div>
+		  	</div>
+		  	<div class="row justify-content-center">
+		  	  <div id="result" style="display: none;">
+                  
+              </div>
+            </div>
+			<div class="row justify-content-center">
+			  <div class="quiz col-12" id="quiz" data-toggle="buttons"></div>
+		  	</div>
+		</div>
+	</main>
+	
+	<footer th:replace="fragments/header :: header-fixed-footer"/>
+
+	<input id="isAuthenticated" sec:authorize="isAuthenticated()" type="text" style="display:none" value="true"/>
+    <input id="isAuthenticated" sec:authorize="isAnonymous()" type="text" style="display:none" value="false"/>
+ 
+    <script>
+    
+		$( document ).ready(function() {
+		    console.log( "ready!" );
+		
+		    var bucketId = '[[${bucketId}]]';
+		    var nativeLanguage = '[[${#locale}]]';
+
+		    var syncdb = $('#isAuthenticated').val();
+
+		    
+		    var language0 = '[[${language0}]]';
+		    var language1 = '[[${language1}]]';
+		
+			if(language0 == nativeLanguage)
+		    {
+		        language0 = language1;
+		        language1 = nativeLanguage;
+		    }
+		    var database = new Database(syncdb);
+		    
+		    $.when( 
+		    	database.synchronize(bucketId)
+ 				/* , d2  */
+ 			).done(function () {
+		    	console.log("sync complete");
+		    
+			    var vocabularyManager = new VocabularyManager(database,language0,language1,bucketId);
+			    
+				$.ajax({
+		           url: "/api/v1/dataset/" + bucketId+"/vocabulary_gen.json",
+		           context : this,
+		    	}).then(function(dataset) {
+				      vocabularyManager.setDataset(dataset);
+				      vocabularyManager.build();
+				});
+		      });
+		});
+	</script>
+	
+    </body>
+
+</html>

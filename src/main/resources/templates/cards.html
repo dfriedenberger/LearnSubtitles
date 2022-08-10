@@ -1,0 +1,140 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<title>subtítulo</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	 
+	    <div th:replace="fragments/header :: header-js-css-core"/>
+	   
+	   	<script src="/js/NoSleep.min.js"></script>
+	   
+	   	<script src="/js/messages.class.js"></script>
+	   
+	   	<script src="/js/database.class.js"></script>
+	    <script src="/js/card.class.js"></script>
+	    <script src="/js/modul-play.js"></script>
+	           
+	    
+	    <link rel="stylesheet" href="/css/play.css">
+       
+        
+    </head>
+    <body>
+    
+    
+    
+    <header th:replace="fragments/header :: header-fixed-play-header"/>
+    
+   
+   <main role="main">
+  		<div class="container">     
+          
+			<div class="row justify-content-center">
+				 	<div class="col-lg-4">
+		        		<!-- Card Flip -->
+						<div class="flip-card">
+						  <div class="flip-card-inner">
+						    <div class="flip-card-front">
+						    
+						      <p class="box tx-box">Architect & Engineer</p> 
+						      
+						      
+						    </div>
+						    <div class="flip-card-back">
+						    
+						       <p class="box tr-box">Architect & Engineer</p> 
+						      
+						      
+						    </div>
+						  </div>
+						</div>
+		        		<!-- End Card Flip -->  
+		        		<div class="nav">
+					        <ul class="list-inline">
+					          <li class="play-command-back"><i class="fa fa-chevron-circle-left"></i></li>
+					          <li class="statistic"><span class="current">1</span>/<span class="total">105</span></li>
+					          <li class="play-command-next"><i class="fa fa-chevron-circle-right"></i></li>
+					        </ul>
+      					</div>
+			   </div>
+			   
+			   
+				 	<div class="embed-responsive embed-responsive-16by9">
+			   			<iframe  class="embed-responsive-item"  src="https://www.youtube.com/embed/4INwx_tmTKw" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+			        </div>
+			 
+			   
+		</div>
+	</main>
+	
+	<footer th:replace="fragments/header :: header-fixed-footer"/>
+
+	<input id="isAuthenticated" sec:authorize="isAuthenticated()" type="text" style="display:none" value="true"/>
+    <input id="isAuthenticated" sec:authorize="isAnonymous()" type="text" style="display:none" value="false"/>
+ 
+    <script>
+    
+		$( document ).ready(function() {
+		
+		
+			
+		     
+		    console.log( "ready!" );
+		
+		    var bucketId = '[[${bucketId}]]';
+		    var nativeLanguage = '[[${#locale}]]';
+
+		    var syncdb = $('#isAuthenticated').val();
+
+		    
+		    var language0 = '[[${language0}]]';
+		    var language1 = '[[${language1}]]';
+		
+		
+			if(language0 == nativeLanguage)
+		    {
+		        language0 = language1;
+		        language1 = nativeLanguage;
+		    }
+		    
+		    console.log("bucketId",bucketId);
+		    console.log("language0",language0);
+		    console.log("language1",language1);
+		    
+		    
+		    var database = new Database(syncdb);
+		    
+		    var messages = new Messages("/api/v1/dataset/" + bucketId+"/context."+language0+"."+language1+".po");
+		    
+		    
+		    
+		    
+		    $.when( 
+		    	database.synchronize(bucketId),
+		    	messages.load()
+ 			).done(function () {
+		    	console.log("sync complete");
+		    
+		        $(".flip-card").click(function(ev) { 
+					ev.preventDefault();
+					$(this).toggleClass("flip-card-hover");
+			    });
+		    
+			    var cardManager = new CardManager(database,messages,language0,language1,bucketId, function() {
+			    	$(".flip-card").removeClass("flip-card-hover");
+			    });
+			    
+				$.ajax({
+		           url: "/api/v1/dataset/" + bucketId+"/context."+language0+".json",
+		           context : this,
+		    	}).then(function(dataset) {
+				      cardManager.setDataset(dataset);
+				      cardManager.build();
+				});
+		    });
+		});
+	</script>
+	
+    </body>
+
+</html>

@@ -2,9 +2,8 @@ package de.frittenburger.impl;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -13,9 +12,6 @@ import de.frittenburger.interfaces.UploadRepository;
 import de.frittenburger.model.BucketInfo;
 import de.frittenburger.model.BucketMetadata;
 import de.frittenburger.model.UploadBucket;
-import de.frittenburger.srt.SrtCluster;
-import de.frittenburger.srt.SrtMergeReader;
-import de.frittenburger.srt.SrtMergeReaderWrapper;
 
 public class RepositoryServiceImpl implements RepositoryService {
 
@@ -59,27 +55,21 @@ public class RepositoryServiceImpl implements RepositoryService {
 		{
 			String name = file.getName();
 			
-			if(name.toLowerCase().endsWith(".jpg"))
+			if(name.toLowerCase().endsWith(".jpg") || name.toLowerCase().endsWith(".png"))
 				md.setImage("/api/v1/dataset/"+bucketId+"/"+name);
 		}
 		
 		
 		
-		byte data[] = repository.readFile(bucket, "merge_gen.txt");
 
-		SrtMergeReader reader = new SrtMergeReader(data);
 		
-		SrtMergeReaderWrapper wrapper = new SrtMergeReaderWrapper(reader);
 		
-		Set<String> languages = new HashSet<String>();
-		List<SrtCluster> clusters = reader.read();
-		
-		for(int i = 0;i < clusters.size() && languages.size() < 2;i++)
-		{
-			languages.addAll(clusters.get(i).getCounter().keySet());
-		}
-		md.setCount(wrapper.size());
-		md.setLanguages(wrapper.getLanguages());
+		List<String> languages = new ArrayList<String>();
+		languages.add("de");
+		languages.add("es");
+
+		md.setCount(512);
+		md.setLanguages(languages);
 		
 		return md;
 	}

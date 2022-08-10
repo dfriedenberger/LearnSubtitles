@@ -14,8 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import de.frittenburger.api.DatasetApi;
 import de.frittenburger.impl.RepositoryServiceImpl;
 import de.frittenburger.impl.UploadRepositoryImpl;
@@ -23,8 +21,6 @@ import de.frittenburger.interfaces.RepositoryService;
 import de.frittenburger.interfaces.UploadRepository;
 import de.frittenburger.model.BucketMetadata;
 import de.frittenburger.model.UploadBucket;
-import de.frittenburger.srt.SrtCluster;
-import de.frittenburger.srt.SrtMergeReader;
 import static org.springframework.http.ResponseEntity.ok;
 
 
@@ -62,35 +58,10 @@ public class DatasetController implements DatasetApi {
 				
 			}
 			return ok(list);
-	
-		//return new ResponseEntity<List<BucketMetadata>>(HttpStatus.INTERNAL_SERVER_ERROR);
-	}
-	
-	
-	@Override
-	public ResponseEntity<Resource> getDataset(String bucketId) {
-		try
-		{
-			UploadBucket bucket = repository.readBucket(bucketId);
-	
-			byte text[] = repository.readFile(bucket, "merge_gen.txt");
-
-			SrtMergeReader reader = new SrtMergeReader(text);
-			
-			//TODO Deprecated ???
-			List<SrtCluster> clusters = reader.read();
-	
-			byte[] data = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsBytes(clusters);
-			
-			
-			return ok(new ByteArrayResource(data));
 		}
-		catch(Exception e)
-		{
-			logger.error(e);
-		}
-		return new ResponseEntity<Resource>(HttpStatus.INTERNAL_SERVER_ERROR);
-	}
+	
+	
+	
 	
 	@Override
 	public ResponseEntity<Resource> getFile(String bucketId, String filename) {
@@ -104,6 +75,10 @@ public class DatasetController implements DatasetApi {
 	         if(filename.endsWith(".json"))
 	         {
 	        	 headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+	         }
+	         if(filename.endsWith(".po"))
+	         {
+	        	 headers.setContentType(MediaType.TEXT_PLAIN);
 	         }
 	         byte data[] = repository.readFile(bucket, filename);
 	

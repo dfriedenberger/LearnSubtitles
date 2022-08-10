@@ -135,9 +135,9 @@ public class PageController {
 		return "redirect:/edit/"+bucketId;
 	}
 
-	 @RequestMapping(value = "/play/{bucketId}",
+	 @RequestMapping(value = "/play/{game}/{bucketId}",
 		        method = RequestMethod.GET)
-	 public String play(Map<String, Object> model, @PathVariable("bucketId") String bucketId) throws IOException {
+	 public String play(Map<String, Object> model, @PathVariable("game") String game, @PathVariable("bucketId") String bucketId) throws IOException {
 
 		defaultValues(model);
 
@@ -155,7 +155,7 @@ public class PageController {
 			logger.info("call Create {} {}" , bucketId);
 		}
 
-		return "play";
+		return game;
 	}
 
 	
